@@ -6,6 +6,7 @@ import aoc.dec_2024.helper.PuzzleInputLoaderImpl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("UnnecessaryLocalVariable")
 public class HistorianHysteria {
 
     private final PuzzleInputLoader puzzleInputLoader;
@@ -31,7 +32,8 @@ public class HistorianHysteria {
             int distance = rightHistorianListOrdered.get(i) - leftHistorianListOrdered.get(i);
             historianListDistance.add(Math.abs(distance));
         }
-        Integer totalDistance = historianListDistance.stream().reduce(0, Integer::sum);
+        Integer totalDistance = historianListDistance.stream()
+                .reduce(0, Integer::sum);
         return totalDistance; // 1577386 ; 1660292 -> correct!
     }
 
@@ -57,7 +59,8 @@ public class HistorianHysteria {
             Integer similarityScore = rightHistorianListFrequency == null ? 0 : rightHistorianListFrequency * leftHistorianListEntry;
             similarityScores.add(similarityScore);
         }
-        Integer totalSimilarityScore = similarityScores.stream().reduce(0, Integer::sum);
+        Integer totalSimilarityScore = similarityScores.stream()
+                .reduce(0, Integer::sum);
         return totalSimilarityScore; // 22776016 --> correct!
     }
 
