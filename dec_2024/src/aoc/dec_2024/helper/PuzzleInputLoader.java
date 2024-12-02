@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface PuzzleInputLoader {
 
-    List<String> getPuzzleContents(String docName);
+    List<String> getRawPuzzleContents(String docName);
 
+    PuzzleContents getPuzzleContents(String docName);
 }
