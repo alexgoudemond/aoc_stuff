@@ -4,6 +4,7 @@ import aoc.dec_2015.helper.PuzzleInputLoader;
 import aoc.dec_2015.helper.PuzzleInputLoaderImpl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MedicineForRudolph {
 
@@ -14,10 +15,10 @@ public class MedicineForRudolph {
     }
 
     private void solvePuzzle1() {
-        // confirm startingMolecule when mix of elements
 //        List<String> rawPuzzleInput = puzzleInputLoader.getRawPuzzleInput("day_19/MedicineForRudolphDummy.txt");
-        List<String> rawPuzzleInput = puzzleInputLoader.getRawPuzzleInput("day_19/MedicineForRudolphTest.txt");
-        List<String> startingMolecule = getStartingMolecule(rawPuzzleInput);
+//        List<String> rawPuzzleInput = puzzleInputLoader.getRawPuzzleInput("day_19/MedicineForRudolphTest.txt");
+        List<String> rawPuzzleInput = puzzleInputLoader.getRawPuzzleInput("day_19/MedicineForRudolph001.txt");
+        List<String> startingMolecule = splitOnCamelCase(rawPuzzleInput.get(rawPuzzleInput.size() - 1));
         rawPuzzleInput.remove(rawPuzzleInput.size() - 1);
         rawPuzzleInput.remove(rawPuzzleInput.size() - 1);
         System.out.println("startingMolecule = " + startingMolecule);
@@ -26,30 +27,31 @@ public class MedicineForRudolph {
                 (element, replacementCompound) ->
                         System.out.println(element + " => " + replacementCompound)
         );
-        // TODO Goudemond 2024/12/02 | Carry on from here
-        //        int maxNumberOfPermutations = getMaxNumberOfPermutations(startingMolecule, replacementElements);
+        System.out.println("replacementElements.size() = " + replacementElements.size());
+        System.out.println("startingMolecule.size() = " + startingMolecule.size());
+//        int maxNumberOfPermutations = getMaxNumberOfPermutations(startingMolecule, replacementElements);
     }
 
-    private List<String> getStartingMolecule(List<String> rawPuzzleInput) {
-        String rawMolecule = rawPuzzleInput.get(rawPuzzleInput.size() - 1);
-        char[] startingMolecule = rawMolecule.toCharArray();
-        List<String> startingMoleculeParts = new ArrayList<>();
+
+
+    private List<String> splitOnCamelCase(String rawString) {
+        char[] characters = rawString.toCharArray();
+        List<String> camelCaseParts = new ArrayList<>();
         int trailingCursor = 0;
         int leadingCursor = 0;
-        int rawMoleculeLength = rawMolecule.length() - 1;
-        while (true) {
-            if (!(trailingCursor < rawMoleculeLength)) break;
-            leadingCursor = leadingCursor >= rawMoleculeLength ? rawMoleculeLength : ++leadingCursor;
-            if (Character.isUpperCase(startingMolecule[leadingCursor])) {
-                startingMoleculeParts.add(rawMolecule.substring(trailingCursor, leadingCursor));
+        int stringLength = rawString.length() - 1;
+        while (trailingCursor < stringLength) {
+            leadingCursor = leadingCursor >= stringLength ? stringLength : ++leadingCursor;
+            if (Character.isUpperCase(characters[leadingCursor])) {
+                camelCaseParts.add(rawString.substring(trailingCursor, leadingCursor));
                 trailingCursor = leadingCursor;
             }
-            if (leadingCursor == rawMoleculeLength){
+            if (leadingCursor == stringLength) {
                 break;
             }
         }
-        startingMoleculeParts.add(rawMolecule.substring(trailingCursor, leadingCursor + 1));
-        return startingMoleculeParts;
+        camelCaseParts.add(rawString.substring(trailingCursor, leadingCursor + 1));
+        return camelCaseParts;
     }
 
     private Map<String, List<String>> getMapOfReplacementElements(List<String> replacements) {
