@@ -25,8 +25,12 @@ public class PuzzleContents {
         return puzzleRows;
     }
 
-    public String[] getPuzzleRow(int index){
-        return puzzleRows.get(index);
+    public List<String> getPuzzleRow(int index) {
+        return List.of(puzzleRows.get(index));
+    }
+
+    public int getNumberOfRows() {
+        return puzzleRows.size();
     }
 
     public void forEach(Consumer<String> consumer) {
