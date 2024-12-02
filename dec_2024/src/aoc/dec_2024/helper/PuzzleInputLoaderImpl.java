@@ -10,11 +10,17 @@ public class PuzzleInputLoaderImpl implements PuzzleInputLoader {
     private final String relativeLocation = "dec_2024/resources/aoc/dec_2024/";
 
     @Override
-    public List<String> getPuzzleContents(String docName) {
+    public List<String> getRawPuzzleContents(String docName) {
         try {
             return Files.readAllLines(Path.of(relativeLocation, docName));
         } catch (IOException e) {
             throw new RuntimeException("Unable to get the Puzzle Contents.", e);
         }
+    }
+
+    @Override
+    public PuzzleContents getPuzzleContents(String docName) {
+        List<String> puzzleContents = getRawPuzzleContents(docName);
+        return new PuzzleContents(puzzleContents);
     }
 }
