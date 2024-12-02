@@ -1,0 +1,6 @@
+Al => HO
+Mg => OH
+0 => HH
+Si => HH
+
+AlMgOSiOAll
