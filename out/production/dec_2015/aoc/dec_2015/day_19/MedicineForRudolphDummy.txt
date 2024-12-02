@@ -3,4 +3,4 @@ Mg => OH
 0 => HH
 Si => HH
 
-AlMgOSiOAll
+AlMgOSi
