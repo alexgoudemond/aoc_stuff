@@ -37,19 +37,9 @@ public class RedNosedReports {
     private int solvePuzzle2() {
 //        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("/day_02/RedNosedReportsTest.txt");
         PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_02/RedNosedReports001.txt");
-        int safeLevels = 0;
-        List<List<Integer>> reportsToDoubleCheck = new ArrayList<>();
-        for (int i = 0; i < puzzleContents.getNumberOfRows(); i++) {
-            List<Integer> report = puzzleContents.getPuzzleRow(i).stream()
-                    .map(Integer::parseInt)
-                    .collect(Collectors.toList());
-            if (bothIncreasingAndDecreasing(report) || !reportIsSafe(report)) {
-                reportsToDoubleCheck.add(report);
-                continue;
-            }
-            safeLevels++;
-        }
-        for (List<Integer> integers : reportsToDoubleCheck) {
+        ReportsToDoubleCheck reportsToDoubleCheck = getReportsToDoubleCheck(puzzleContents);
+        int safeLevels = reportsToDoubleCheck.getSafeLevels();
+        for (List<Integer> integers : reportsToDoubleCheck.getReportsToDoubleCheck()) {
             for (int k = 0; k < integers.size(); k++) {
                 List<Integer> reportToCheck = new ArrayList<>(integers);
                 reportToCheck.remove(k);
@@ -63,6 +53,21 @@ public class RedNosedReports {
             }
         }
         return safeLevels; // 409 --> incorrect ; 318 --> correct!
+    }
+
+    private ReportsToDoubleCheck getReportsToDoubleCheck(PuzzleContents puzzleContents) {
+        ReportsToDoubleCheck reportsToDoubleCheck = new ReportsToDoubleCheck();
+        for (int i = 0; i < puzzleContents.getNumberOfRows(); i++) {
+            List<Integer> report = puzzleContents.getPuzzleRow(i).stream()
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toList());
+            if (bothIncreasingAndDecreasing(report) || !reportIsSafe(report)) {
+                reportsToDoubleCheck.add(report);
+                continue;
+            }
+            reportsToDoubleCheck.increaseSafeLevels();
+        }
+        return reportsToDoubleCheck;
     }
 
     private boolean bothIncreasingAndDecreasing(List<Integer> level) {
