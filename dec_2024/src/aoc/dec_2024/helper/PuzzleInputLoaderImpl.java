@@ -10,7 +10,7 @@ public class PuzzleInputLoaderImpl implements PuzzleInputLoader {
     private final String relativeLocation = "dec_2024/resources/aoc/dec_2024/";
 
     @Override
-    public List<String> getRawPuzzleContents(String docName) {
+    public List<String> getRawPuzzleInput(String docName) {
         try {
             return Files.readAllLines(Path.of(relativeLocation, docName));
         } catch (IOException e) {
@@ -20,7 +20,7 @@ public class PuzzleInputLoaderImpl implements PuzzleInputLoader {
 
     @Override
     public PuzzleContents getPuzzleContents(String docName) {
-        List<String> puzzleContents = getRawPuzzleContents(docName);
+        List<String> puzzleContents = getRawPuzzleInput(docName);
         return new PuzzleContents(puzzleContents);
     }
 }

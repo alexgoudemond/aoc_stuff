@@ -17,7 +17,7 @@ public class HistorianHysteria {
 
     public Integer solvePuzzle1() {
 //        List<String> puzzleContents = puzzleInputLoader.getPuzzleContents("day_01/HistorianHysteriaTest.txt");
-        List<String> puzzleContents = puzzleInputLoader.getRawPuzzleContents("day_01/HistorianHysteria001.txt");
+        List<String> puzzleContents = puzzleInputLoader.getRawPuzzleInput("day_01/HistorianHysteria001.txt");
         List<Integer> leftHistorianList = new ArrayList<>();
         List<Integer> rightHistorianList = new ArrayList<>();
         for (String row : puzzleContents) {
@@ -39,7 +39,7 @@ public class HistorianHysteria {
 
     public Integer solvePuzzle2() {
 //        List<String> puzzleContents = puzzleInputLoader.getPuzzleContents("day_01/HistorianHysteriaTest.txt");
-        List<String> puzzleContents = puzzleInputLoader.getRawPuzzleContents("day_01/HistorianHysteria001.txt");
+        List<String> puzzleContents = puzzleInputLoader.getRawPuzzleInput("day_01/HistorianHysteria001.txt");
         List<Integer> leftHistorianList = new ArrayList<>();
         Map<Integer, Integer> rightHistorianListFrequencies = new HashMap<>();
         for (String row : puzzleContents) {
