@@ -1,5 +1,6 @@
 package aoc.dec_2024.helper;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -35,5 +36,19 @@ public class PuzzleContents {
 
     public void forEach(Consumer<String> consumer) {
         rawPuzzleContent.forEach(consumer);
+    }
+
+    @Override
+    public String toString() {
+        return "PuzzleContents{" +
+                "rawPuzzleContent=" + rawPuzzleContent +
+                ", puzzleRows=" + puzzleRowsToString() +
+                '}';
+    }
+
+    public List<String> puzzleRowsToString() {
+        return puzzleRows.stream()
+                .map(Arrays::toString)
+                .collect(Collectors.toList());
     }
 }
