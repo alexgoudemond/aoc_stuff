@@ -14,6 +14,7 @@ public class MedicineForRudolph {
         puzzleInputLoader = new PuzzleInputLoaderImpl();
     }
 
+    // TODO Goudemond 2024/12/03 | Figure out how to solve this without ALL the combinatorics
     private void solvePuzzle1() {
 //        List<String> rawPuzzleInput = puzzleInputLoader.getRawPuzzleInput("day_19/MedicineForRudolphDummy.txt");
 //        List<String> rawPuzzleInput = puzzleInputLoader.getRawPuzzleInput("day_19/MedicineForRudolphTest.txt");
