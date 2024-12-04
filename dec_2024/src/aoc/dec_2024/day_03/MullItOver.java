@@ -14,7 +14,7 @@ public class MullItOver {
     private final PuzzleInputLoader puzzleInputLoader;
 
     public MullItOver() {
-        puzzleInputLoader = new PuzzleInputLoaderImpl();
+        puzzleInputLoader = new PuzzleInputLoaderImpl("");
     }
 
     private long solvePuzzle1() {

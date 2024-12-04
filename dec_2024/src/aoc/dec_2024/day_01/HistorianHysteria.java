@@ -12,7 +12,7 @@ public class HistorianHysteria {
     private final PuzzleInputLoader puzzleInputLoader;
 
     public HistorianHysteria() {
-        this.puzzleInputLoader = new PuzzleInputLoaderImpl();
+        this.puzzleInputLoader = new PuzzleInputLoaderImpl(" ");
     }
 
     public Integer solvePuzzle1() {

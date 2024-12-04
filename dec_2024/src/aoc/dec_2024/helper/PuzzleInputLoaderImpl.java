@@ -9,6 +9,12 @@ public class PuzzleInputLoaderImpl implements PuzzleInputLoader {
 
     private final String relativeLocation = "dec_2024/resources/aoc/dec_2024/";
 
+    private final String delimiter;
+
+    public PuzzleInputLoaderImpl(String delimiter) {
+        this.delimiter = delimiter == null ? "" : delimiter;
+    }
+
     @Override
     public List<String> getRawPuzzleInput(String docName) {
         try {
@@ -21,6 +27,6 @@ public class PuzzleInputLoaderImpl implements PuzzleInputLoader {
     @Override
     public PuzzleContents getPuzzleContents(String docName) {
         List<String> puzzleContents = getRawPuzzleInput(docName);
-        return new PuzzleContents(puzzleContents);
+        return new PuzzleContents(puzzleContents, delimiter);
     }
 }
