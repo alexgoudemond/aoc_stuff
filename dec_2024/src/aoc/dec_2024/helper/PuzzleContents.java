@@ -13,22 +13,27 @@ public class PuzzleContents {
 
     private final String[][] puzzleGrid;
 
-    public PuzzleContents(List<String> rawPuzzleContent) {
+    private final String delimiter;
+
+    public PuzzleContents(List<String> rawPuzzleContent, String delimiter) {
+        this.delimiter = delimiter == null ? "" : delimiter;
         this.rawPuzzleContent = rawPuzzleContent;
         this.puzzleRows = getPuzzleAsRows(rawPuzzleContent);
         this.puzzleGrid = getContentsAsGrid();
     }
 
+    @SuppressWarnings("DataFlowIssue")
     private List<String[]> getPuzzleAsRows(List<String> rawPuzzleContent) {
         return rawPuzzleContent.stream()
-                .map(str -> str.split(" "))
+                .map(str -> str.split(delimiter))
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("DataFlowIssue")
     private String[][] getContentsAsGrid() {
-        String[][] grid = new String[puzzleRows.size()][puzzleRows.get(0).length];
-        for (int i = 0; i < puzzleRows.size(); i++) {
-            grid[i] = puzzleRows.get(i);
+        String[][] grid = new String[rawPuzzleContent.size()][rawPuzzleContent.get(0).length()];
+        for (int i = 0; i < rawPuzzleContent.size(); i++) {
+            grid[i] = rawPuzzleContent.get(i).split(delimiter);
         }
         return grid;
     }

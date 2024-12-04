@@ -13,7 +13,7 @@ public class RedNosedReports {
     private PuzzleInputLoader puzzleInputLoader;
 
     public RedNosedReports() {
-        puzzleInputLoader = new PuzzleInputLoaderImpl();
+        puzzleInputLoader = new PuzzleInputLoaderImpl(" ");
     }
 
     private int solvePuzzle1() {
