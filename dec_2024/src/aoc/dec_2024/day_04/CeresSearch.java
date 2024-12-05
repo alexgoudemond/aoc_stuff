@@ -1,9 +1,6 @@
 package aoc.dec_2024.day_04;
 
-import aoc.dec_2024.helper.Coordinate;
-import aoc.dec_2024.helper.PuzzleContents;
-import aoc.dec_2024.helper.PuzzleInputLoader;
-import aoc.dec_2024.helper.PuzzleInputLoaderImpl;
+import aoc.dec_2024.helper.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +12,9 @@ public class CeresSearch {
     private final String finalLetterToFind;
 
     // TODO Goudemond 2024/12/05 | Model as own class
-    private final String[][] puzzleGrid;
+    private final PuzzleGrid puzzleGrid;
 
     private final String wordToFind;
-
-    private final int maxWidth;
-
-    private final int maxHeight;
 
     public CeresSearch() {
         PuzzleInputLoader puzzleInputLoader = new PuzzleInputLoaderImpl("");
@@ -30,25 +23,22 @@ public class CeresSearch {
         puzzleGrid = puzzleContents.getPuzzleGrid();
         wordToFind = "XMAS";
         finalLetterToFind = wordToFind.substring(wordToFind.length() - 1);
-        maxWidth = puzzleGrid[0].length;
-        maxHeight = puzzleGrid.length;
     }
 
-    // TODO Goudemond 2024/12/05 | count to find error, expected 18
     private int solvePuzzle1() {
 //        puzzleContents.showAsGrid();
         List<Coordinate> xLocations = getCoordinatesForX();
 //        xLocations.forEach(System.out::println);
         int wordCount = 0;
         for (Coordinate location : xLocations) {
-            wordCount += leftToRight(location.right(), nextLetterToFind(location));	 // 3
-            wordCount += rightToLeft(location.left(), nextLetterToFind(location));	 // 2
-            wordCount += topToBottom(location.down(), nextLetterToFind(location));	 // 1
-            wordCount += bottomToTop(location.up(), nextLetterToFind(location));	 // 2
-            wordCount += diagonalLeftUp(location.up().left(), nextLetterToFind(location));	 // 4
-            wordCount += diagonalRightUp(location.up().right(), nextLetterToFind(location));	 // 4
-            wordCount += diagonalRightDown(location.down().right(), nextLetterToFind(location));	 // 1
-            wordCount += diagonalLeftDown(location.down().left(), nextLetterToFind(location));	 // 1
+            wordCount += leftToRight(location.right(), nextLetterToFind(location));     // 3
+            wordCount += rightToLeft(location.left(), nextLetterToFind(location));     // 2
+            wordCount += topToBottom(location.down(), nextLetterToFind(location));     // 1
+            wordCount += bottomToTop(location.up(), nextLetterToFind(location));     // 2
+            wordCount += diagonalLeftUp(location.up().left(), nextLetterToFind(location));     // 4
+            wordCount += diagonalRightUp(location.up().right(), nextLetterToFind(location));     // 4
+            wordCount += diagonalRightDown(location.down().right(), nextLetterToFind(location));     // 1
+            wordCount += diagonalLeftDown(location.down().left(), nextLetterToFind(location));     // 1
 //            System.out.print(location);
 //            if (leftToRight(location.right(), nextLetterToFind(location)) == 1){ // 3
 //            if (rightToLeft(location.left(), nextLetterToFind(location)) == 1){ // 2
@@ -71,7 +61,7 @@ public class CeresSearch {
             return 0;
         }
         int letterFound = terminalConditionForLetterToFind(coord, letterToCheck);
-        if (letterFound != -1){
+        if (letterFound != -1) {
             return letterFound;
         }
         return diagonalLeftDown(coord.down().left(), nextLetterToFind(coord));
@@ -82,7 +72,7 @@ public class CeresSearch {
             return 0;
         }
         int letterFound = terminalConditionForLetterToFind(coord, letterToCheck);
-        if (letterFound != -1){
+        if (letterFound != -1) {
             return letterFound;
         }
         return diagonalRightDown(coord.down().right(), nextLetterToFind(coord));
@@ -93,7 +83,7 @@ public class CeresSearch {
             return 0;
         }
         int letterFound = terminalConditionForLetterToFind(coord, letterToCheck);
-        if (letterFound != -1){
+        if (letterFound != -1) {
             return letterFound;
         }
         return diagonalRightUp(coord.up().right(), nextLetterToFind(coord));
@@ -104,7 +94,7 @@ public class CeresSearch {
             return 0;
         }
         int letterFound = terminalConditionForLetterToFind(coord, letterToCheck);
-        if (letterFound != -1){
+        if (letterFound != -1) {
             return letterFound;
         }
         return diagonalLeftUp(coord.up().left(), nextLetterToFind(coord));
@@ -115,7 +105,7 @@ public class CeresSearch {
             return 0;
         }
         int letterFound = terminalConditionForLetterToFind(coord, letterToCheck);
-        if (letterFound != -1){
+        if (letterFound != -1) {
             return letterFound;
         }
         return bottomToTop(coord.up(), nextLetterToFind(coord));
@@ -126,7 +116,7 @@ public class CeresSearch {
             return 0;
         }
         int letterFound = terminalConditionForLetterToFind(coord, letterToCheck);
-        if (letterFound != -1){
+        if (letterFound != -1) {
             return letterFound;
         }
         return topToBottom(coord.down(), nextLetterToFind(coord));
@@ -137,7 +127,7 @@ public class CeresSearch {
             return 0;
         }
         int letterFound = terminalConditionForLetterToFind(coord, letterToCheck);
-        if (letterFound != -1){
+        if (letterFound != -1) {
             return letterFound;
         }
         return rightToLeft(coord.left(), nextLetterToFind(coord));
@@ -148,7 +138,7 @@ public class CeresSearch {
             return 0;
         }
         int letterFound = terminalConditionForLetterToFind(coord, letterToCheck);
-        if (letterFound != -1){
+        if (letterFound != -1) {
             return letterFound;
         }
         return leftToRight(coord.right(), nextLetterToFind(coord));
@@ -159,7 +149,7 @@ public class CeresSearch {
     }
 
     private boolean tooTall(Coordinate coord) {
-        return coord.getX() >= maxHeight; // || coord.down().getX() >= maxHeight;
+        return coord.getX() >= puzzleGrid.maxHeight(); // || coord.down().getX() >= maxHeight;
     }
 
     private boolean tooNarrow(Coordinate coord) {
@@ -167,10 +157,10 @@ public class CeresSearch {
     }
 
     private boolean tooWide(Coordinate coord) {
-        return coord.getY() >= maxWidth; // || coord.left().getY() >= maxWidth;
+        return coord.getY() >= puzzleGrid.maxWidth(); // || coord.left().getY() >= maxWidth;
     }
 
-    private int terminalConditionForLetterToFind(Coordinate coord, char letterToCheck){
+    private int terminalConditionForLetterToFind(Coordinate coord, char letterToCheck) {
         String correspondingLetter = correspondingLetter(coord);
         if (!correspondingLetter.equals(Character.toString(letterToCheck))) {
             return 0;
@@ -192,14 +182,14 @@ public class CeresSearch {
     }
 
     private String correspondingLetter(Coordinate location) {
-        return puzzleGrid[location.getX()][location.getY()];
+        return puzzleGrid.elementAt(location.getX(), location.getY());
     }
 
     private List<Coordinate> getCoordinatesForX() {
         List<Coordinate> xLocations = new ArrayList<>();
-        for (int i = 0; i < puzzleGrid.length; i++) {
-            for (int j = 0; j < puzzleGrid[i].length; j++) {
-                if (puzzleGrid[i][j].equals("X")) {
+        for (int i = 0; i < puzzleGrid.numRows(); i++) {
+            for (int j = 0; j < puzzleGrid.numColumns(); j++) {
+                if (puzzleGrid.elementAt(i, j).equals("X")) {
                     xLocations.add(new Coordinate(i, j));
                 }
             }
@@ -212,5 +202,7 @@ public class CeresSearch {
         CeresSearch ceresSearch = new CeresSearch();
         int puzzle1Solution = ceresSearch.solvePuzzle1();
         System.out.println("puzzle1Solution = " + puzzle1Solution);
+        // TODO Goudemond 2024/12/05 | do Puzzle 2
+        // TODO Goudemond 2024/12/05 | Consider Abstracting the Grid
     }
 }
