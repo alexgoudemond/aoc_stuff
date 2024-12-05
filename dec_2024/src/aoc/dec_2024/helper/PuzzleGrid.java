@@ -1,5 +1,6 @@
 package aoc.dec_2024.helper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PuzzleGrid {
@@ -55,5 +56,37 @@ public class PuzzleGrid {
 
     public String elementAt(int row, int col) {
         return puzzleGrid[row][col];
+    }
+
+    public List<Coordinate> getCoordinatesFor(String letterToFind) {
+        List<Coordinate> xLocations = new ArrayList<>();
+        for (int i = 0; i < numRows(); i++) {
+            for (int j = 0; j < numColumns(); j++) {
+                if (elementAt(i, j).equals(letterToFind)) {
+                    xLocations.add(new Coordinate(i, j));
+                }
+            }
+        }
+        return xLocations;
+    }
+
+    public String correspondingLetter(Coordinate location) {
+        return elementAt(location.getX(), location.getY());
+    }
+
+    public boolean tooShort(Coordinate coord) {
+        return coord.getX() < 0;
+    }
+
+    public boolean tooTall(Coordinate coord) {
+        return coord.getX() >= maxHeight();
+    }
+
+    public boolean tooNarrow(Coordinate coord) {
+        return coord.getY() < 0;
+    }
+
+    public boolean tooWide(Coordinate coord) {
+        return coord.getY() >= maxWidth();
     }
 }
