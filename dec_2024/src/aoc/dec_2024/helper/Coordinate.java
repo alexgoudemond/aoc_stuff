@@ -34,4 +34,8 @@ public class Coordinate {
                 ", y=" + y +
                 '}';
     }
+
+    public Coordinate right() {
+        return new Coordinate(x, y + 1);
+    }
 }
