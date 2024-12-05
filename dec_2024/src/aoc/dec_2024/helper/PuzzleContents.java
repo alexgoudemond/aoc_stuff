@@ -11,7 +11,8 @@ public class PuzzleContents {
 
     private final List<String[]> puzzleRows;
 
-    private final String[][] puzzleGrid;
+//    private final String[][] puzzleGrid;
+    private final PuzzleGrid puzzleGrid;
 
     private final String delimiter;
 
@@ -19,7 +20,7 @@ public class PuzzleContents {
         this.delimiter = delimiter == null ? "" : delimiter;
         this.rawPuzzleContent = rawPuzzleContent;
         this.puzzleRows = getPuzzleAsRows(rawPuzzleContent);
-        this.puzzleGrid = getContentsAsGrid();
+        this.puzzleGrid = new PuzzleGrid(rawPuzzleContent, delimiter);
     }
 
     @SuppressWarnings("DataFlowIssue")
@@ -54,7 +55,7 @@ public class PuzzleContents {
         return puzzleRows.size();
     }
 
-    public String[][] getPuzzleGrid() {
+    public PuzzleGrid getPuzzleGrid() {
         return puzzleGrid;
     }
 
@@ -77,6 +78,6 @@ public class PuzzleContents {
     }
 
     public void showAsGrid() {
-        rawPuzzleContent.forEach(row -> System.out.println(row.toCharArray()));
+        puzzleGrid.showAsGrid();
     }
 }
