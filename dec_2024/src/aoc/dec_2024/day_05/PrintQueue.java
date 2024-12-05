@@ -4,10 +4,7 @@ import aoc.dec_2024.helper.PuzzleContents;
 import aoc.dec_2024.helper.PuzzleInputLoader;
 import aoc.dec_2024.helper.PuzzleInputLoaderImpl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class PrintQueue {
 
@@ -35,14 +32,59 @@ public class PrintQueue {
         int sumOfMiddlePageNumbers = 0;
         for (String updatePage : updatePages) {
             String[] orderedPages = updatePage.split(",");
-            if (validUpdate(updatePage, orderedPages)) {
+            if (validUpdate(orderedPages)) {
                 sumOfMiddlePageNumbers += Integer.parseInt(orderedPages[orderedPages.length / 2]);
             }
         }
         return sumOfMiddlePageNumbers; // 4959 --> Right Answer!
     }
 
-    private boolean validUpdate(String updatePage, String[] orderedPages) {
+    public int solvePuzzle2() {
+        int sumOfMiddlePageNumbers = 0;
+        List<String> invalidPages = new ArrayList<>();
+        for (String updatePage : updatePages) {
+            String[] orderedPages = updatePage.split(",");
+            if (!validUpdate(orderedPages)) {
+                invalidPages.add(updatePage);
+            }
+        }
+        for (String invalidPage : invalidPages) {
+//            System.out.println("invalid Page = " + invalidPage);
+            String[] orderedPages = invalidPage.split(",");
+            while (!validUpdate(orderedPages)) {
+                orderedPages = getCorrectedUpdate(orderedPages);
+            }
+//            System.out.println("fixed page: " + Arrays.toString(orderedPages));
+            sumOfMiddlePageNumbers += Integer.parseInt(orderedPages[orderedPages.length / 2]);
+        }
+        return sumOfMiddlePageNumbers; // 4655 --> right answer!
+    }
+
+    private String[] getCorrectedUpdate(String[] orderedPages) {
+        for (int i = 0; i < orderedPages.length; i++) {
+            String cursor = orderedPages[i];
+            List<String> rulesForCursor = getRulesForPageNumber(cursor);
+            for (int j = i + 1; j < orderedPages.length; j++) {
+                String pageNumber = orderedPages[j];
+                if (!isLessThan(cursor, pageNumber, rulesForCursor)) {
+                    orderedPages[j] = cursor;
+                    orderedPages[i] = pageNumber;
+                    return orderedPages;
+                }
+            }
+            for (int j = orderedPages.length - 1; j > i; j--) {
+                String pageNumber = orderedPages[j];
+                if (!isGreaterThan(pageNumber, cursor, rulesForCursor)) {
+                    orderedPages[j] = cursor;
+                    orderedPages[i] = pageNumber;
+                    return orderedPages;
+                }
+            }
+        }
+        return orderedPages;
+    }
+
+    private boolean validUpdate(String[] orderedPages) {
         for (int i = 0; i < orderedPages.length; i++) {
             String cursor = orderedPages[i];
             List<String> rulesForCursor = getRulesForPageNumber(cursor);
@@ -95,6 +137,8 @@ public class PrintQueue {
         PrintQueue printQueue = new PrintQueue();
         int puzzle1Solution = printQueue.solvePuzzle1();
         System.out.println("puzzle1Solution = " + puzzle1Solution);
+        int puzzle2Solution = printQueue.solvePuzzle2();
+        System.out.println("puzzle2Solution = " + puzzle2Solution);
     }
 
 }
