@@ -9,9 +9,8 @@ public class PuzzleContents {
 
     private final List<String> rawPuzzleContent;
 
-    private final List<String[]> puzzleRows;
+    private final List<String> puzzleRows;
 
-//    private final String[][] puzzleGrid;
     private final PuzzleGrid puzzleGrid;
 
     private final String delimiter;
@@ -24,9 +23,9 @@ public class PuzzleContents {
     }
 
     @SuppressWarnings("DataFlowIssue")
-    private List<String[]> getPuzzleAsRows(List<String> rawPuzzleContent) {
+    private List<String> getPuzzleAsRows(List<String> rawPuzzleContent) {
         return rawPuzzleContent.stream()
-                .map(str -> str.split(delimiter))
+                .map(str -> str.split(delimiter)[0])
                 .collect(Collectors.toList());
     }
 
@@ -43,7 +42,7 @@ public class PuzzleContents {
         return rawPuzzleContent;
     }
 
-    public List<String[]> getPuzzleRows() {
+    public List<String> getPuzzleRows() {
         return puzzleRows;
     }
 
@@ -67,14 +66,8 @@ public class PuzzleContents {
     public String toString() {
         return "PuzzleContents{" +
                 "rawPuzzleContent=" + rawPuzzleContent +
-                ", puzzleRows=" + puzzleRowsToString() +
+                ", puzzleRows=" + puzzleRows +
                 '}';
-    }
-
-    public List<String> puzzleRowsToString() {
-        return puzzleRows.stream()
-                .map(Arrays::toString)
-                .collect(Collectors.toList());
     }
 
     public void showAsGrid() {
