@@ -38,4 +38,16 @@ public class Coordinate {
     public Coordinate right() {
         return new Coordinate(x, y + 1);
     }
+
+    public Coordinate left() {
+        return new Coordinate(x, y - 1);
+    }
+
+    public Coordinate down() {
+        return new Coordinate(x + 1, y);
+    }
+
+    public Coordinate up() {
+        return new Coordinate(x - 1, y);
+    }
 }
