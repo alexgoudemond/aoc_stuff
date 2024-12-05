@@ -25,7 +25,8 @@ public class CeresSearch {
 
     public CeresSearch() {
         PuzzleInputLoader puzzleInputLoader = new PuzzleInputLoaderImpl("");
-        puzzleContents = puzzleInputLoader.getPuzzleContents("day_04/CeresSearchTest.txt");
+//        puzzleContents = puzzleInputLoader.getPuzzleContents("day_04/CeresSearchTest.txt");
+        puzzleContents = puzzleInputLoader.getPuzzleContents("day_04/CeresSearch001.txt");
         puzzleGrid = puzzleContents.getPuzzleGrid();
         wordToFind = "XMAS";
         finalLetterToFind = wordToFind.substring(wordToFind.length() - 1);
@@ -35,36 +36,34 @@ public class CeresSearch {
 
     // TODO Goudemond 2024/12/05 | count to find error, expected 18
     private int solvePuzzle1() {
-        // do a star algorithm instead. find an x and walk in every direction
-        puzzleContents.showAsGrid();
-        // TODO Goudemond 2024/12/04 | do logic to walk through all compass directions of the grid
+//        puzzleContents.showAsGrid();
         List<Coordinate> xLocations = getCoordinatesForX();
 //        xLocations.forEach(System.out::println);
         int wordCount = 0;
         for (Coordinate location : xLocations) {
-//            wordCount += leftToRight(location.right(), nextLetterToFind(location));	 // 3
-//            wordCount += rightToLeft(location.left(), nextLetterToFind(location));	 // 2
-//            wordCount += topToBottom(location.down(), nextLetterToFind(location));	 // 1
-//            wordCount += bottomToTop(location.up(), nextLetterToFind(location));	 // 1
-//            wordCount += diagonalLeftUp(location.up().left(), nextLetterToFind(location));	 // 3
-//            wordCount += diagonalRightUp(location.up().right(), nextLetterToFind(location));	 // 4
-//            wordCount += diagonalRightDown(location.down().right(), nextLetterToFind(location));	 // 1
-//            wordCount += diagonalLeftDown(location.down().left(), nextLetterToFind(location));	 // 1
-            System.out.print(location);
+            wordCount += leftToRight(location.right(), nextLetterToFind(location));	 // 3
+            wordCount += rightToLeft(location.left(), nextLetterToFind(location));	 // 2
+            wordCount += topToBottom(location.down(), nextLetterToFind(location));	 // 1
+            wordCount += bottomToTop(location.up(), nextLetterToFind(location));	 // 2
+            wordCount += diagonalLeftUp(location.up().left(), nextLetterToFind(location));	 // 4
+            wordCount += diagonalRightUp(location.up().right(), nextLetterToFind(location));	 // 4
+            wordCount += diagonalRightDown(location.down().right(), nextLetterToFind(location));	 // 1
+            wordCount += diagonalLeftDown(location.down().left(), nextLetterToFind(location));	 // 1
+//            System.out.print(location);
 //            if (leftToRight(location.right(), nextLetterToFind(location)) == 1){ // 3
 //            if (rightToLeft(location.left(), nextLetterToFind(location)) == 1){ // 2
 //            if (topToBottom(location.down(), nextLetterToFind(location)) == 1){ // 1
-            if (bottomToTop(location.up(), nextLetterToFind(location)) == 1){ // 1
-//            if (diagonalLeftUp(location.up().left(), nextLetterToFind(location)) == 1){ // 3
+//            if (bottomToTop(location.up(), nextLetterToFind(location)) == 1){ // 2
+//            if (diagonalLeftUp(location.up().left(), nextLetterToFind(location)) == 1){ // 4
 //            if (diagonalRightUp(location.up().right(), nextLetterToFind(location)) == 1){ // 4
 //            if (diagonalRightDown(location.down().right(), nextLetterToFind(location)) == 1){ // 1
 //            if (diagonalLeftDown(location.down().left(), nextLetterToFind(location)) == 1){ // 1
-                System.out.println(" has xmas");
-            }else{
-                System.out.println();
-            }
+//                System.out.println(" has xmas");
+//            }else{
+//                System.out.println();
+//            }
         }
-        return wordCount;
+        return wordCount; //2406 --> correct!
     }
 
     private int diagonalLeftDown(Coordinate coord, char letterToCheck) {
@@ -156,19 +155,19 @@ public class CeresSearch {
     }
 
     private boolean tooShort(Coordinate coord) {
-        return coord.getX() <= 0 || coord.up().getX() <= 0;
+        return coord.getX() < 0; // || coord.up().getX() <= 0;
     }
 
     private boolean tooTall(Coordinate coord) {
-        return coord.getX() >= maxHeight || coord.down().getX() >= maxHeight;
+        return coord.getX() >= maxHeight; // || coord.down().getX() >= maxHeight;
     }
 
     private boolean tooNarrow(Coordinate coord) {
-        return coord.getY() <= 0 || coord.right().getY() <= 0;
+        return coord.getY() < 0; // || coord.right().getY() <= 0;
     }
 
     private boolean tooWide(Coordinate coord) {
-        return coord.getY() >= maxWidth || coord.left().getY() >= maxWidth;
+        return coord.getY() >= maxWidth; // || coord.left().getY() >= maxWidth;
     }
 
     private int terminalConditionForLetterToFind(Coordinate coord, char letterToCheck){
