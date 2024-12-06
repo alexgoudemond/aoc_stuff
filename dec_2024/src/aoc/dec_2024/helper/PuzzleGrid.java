@@ -62,6 +62,10 @@ public class PuzzleGrid {
         return puzzleGrid[row][col];
     }
 
+    public String elementAt(Coordinate coord) {
+        return puzzleGrid[coord.getX()][coord.getY()];
+    }
+
     public List<Coordinate> getCoordinatesFor(String letterToFind) {
         List<Coordinate> xLocations = new ArrayList<>();
         for (int i = 0; i < numRows(); i++) {
@@ -92,5 +96,9 @@ public class PuzzleGrid {
 
     public boolean tooWide(Coordinate coord) {
         return coord.getY() >= maxWidth();
+    }
+
+    public void setElementTo(Coordinate position, String symbol) {
+        this.puzzleGrid[position.getX()][position.getY()] = symbol;
     }
 }

@@ -2,7 +2,9 @@ package aoc.dec_2024.day_06;
 
 import aoc.dec_2024.helper.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GuardGallivant {
@@ -15,43 +17,60 @@ public class GuardGallivant {
 
     private final PuzzleGrid puzzleGrid;
 
-    private String[][] labMap;
+//    private String[][] labMap;
 
     public GuardGallivant() {
         PuzzleInputLoader puzzleInputLoader = new PuzzleInputLoaderImpl("");
-//        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivantTest.txt");
-        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivant001.txt");
+        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivantTest.txt");
+//        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivant001.txt");
         this.puzzleGrid = puzzleContents.getPuzzleGrid();
-        this.labMap = puzzleContents.getPuzzleGrid().getGrid();
+//        this.labMap = puzzleContents.getPuzzleGrid().getGrid();
     }
 
     private int solvePuzzle1() {
 //        puzzleGrid.showAsGrid();
         simulateGuardPatrolInLab();
 //        puzzleGrid.showAsGrid();
-        Set<Coordinate> guardVisitsOnMap = new HashSet<>();
-        for (int i = 0; i < labMap.length; i++) {
-            for (int j = 0; j < labMap[i].length; j++) {
-                if (labMap[i][j].equals(VISITED)) {
-                    guardVisitsOnMap.add(new Coordinate(i, j));
-                }
-            }
-        }
+        Set<Coordinate> guardVisitsOnMap = getGuardVisitsOnMap();
         // (Goudemond 20241206) Don't forget to add the final position, marked with 'V'!
         return guardVisitsOnMap.size() + 1; // 5239 --> Correct!
     }
 
+    private Set<Coordinate> getGuardVisitsOnMap() {
+        Set<Coordinate> guardVisitsOnMap = new HashSet<>();
+        for (int i = 0; i < puzzleGrid.numRows(); i++) {
+            for (int j = 0; j < puzzleGrid.numColumns(); j++) {
+                if (puzzleGrid.elementAt(i, j).equals(VISITED)) {
+                    guardVisitsOnMap.add(new Coordinate(i, j));
+                }
+            }
+        }
+        return guardVisitsOnMap;
+    }
+
+    // TODO Goudemond 2024/12/06 | Note all boundaries
+    // TODO Goudemond 2024/12/06 | Note all coordinates visited inline with a boundary
+    // TODO Goudemond 2024/12/06 | check all those
+    private int solvePuzzle2() {
+//        this.labMap = puzzleGrid.getGrid(); // (Goudemond 20241206) Reset
+//        simulateGuardPatrolInLab();
+//        puzzleGrid.showAsGrid();
+//        Set<Coordinate> guardVisitsOnMap = getGuardVisitsOnMap();
+
+        return -1;
+    }
+
     private void simulateGuardPatrolInLab() {
         Coordinate guardStartingPosition = getGuardStartingPosition();
-        System.out.println("guardStartingPosition = " + guardStartingPosition);
+//        System.out.println("guardStartingPosition = " + guardStartingPosition);
         Coordinate previousPosition = guardStartingPosition;
         Coordinate nextPosition = guardStartingPosition;
         while (true) {
             nextPosition = getNextPosition(nextPosition);
-            if (nextPosition.equals(Coordinate.dummyCoordinate())){
+            if (nextPosition.equals(Coordinate.dummyCoordinate())) {
                 break;
             }
-            String guardDirection = labMap[previousPosition.getX()][previousPosition.getY()];
+            String guardDirection = puzzleGrid.elementAt(previousPosition.getX(), previousPosition.getY());
             markPositionOnLabMap(previousPosition, VISITED);
             markPositionOnLabMap(nextPosition, guardDirection);
 //            System.out.println("nextPosition = " + nextPosition);
@@ -60,13 +79,13 @@ public class GuardGallivant {
     }
 
     private void markPositionOnLabMap(Coordinate position, String symbol) {
-        labMap[position.getX()][position.getY()] = symbol;
+        puzzleGrid.setElementTo(position, symbol);
     }
 
     private Coordinate getNextPosition(Coordinate guardPosition) {
         Coordinate nextPosition = guardPosition;
         Coordinate currentPosition = guardPosition;
-        int facingDirectionIndex = GUARD_DIRECTIONS.indexOf(labMap[guardPosition.getX()][guardPosition.getY()]);
+        int facingDirectionIndex = GUARD_DIRECTIONS.indexOf(puzzleGrid.elementAt(guardPosition));
         nextPosition = getNextPositionConsidering(currentPosition, facingDirectionIndex);
         // TODO Goudemond 2024/12/06 | handle boundaries
         if (puzzleGrid.tooNarrow(nextPosition) || puzzleGrid.tooWide(nextPosition) ||
@@ -83,7 +102,7 @@ public class GuardGallivant {
     private void updateGuardDirection(int facingDirectionIndex, Coordinate currentPosition) {
         int index = facingDirectionIndex >= GUARD_DIRECTIONS.length() ? 0 : facingDirectionIndex;
         String string = Character.toString(GUARD_DIRECTIONS.charAt(index));
-        labMap[currentPosition.getX()][currentPosition.getY()] = string;
+        puzzleGrid.setElementTo(currentPosition, string);
     }
 
     private Coordinate getNextPositionConsidering(Coordinate position, int facingDirectionIndex) {
@@ -123,6 +142,8 @@ public class GuardGallivant {
         GuardGallivant guardGallivant = new GuardGallivant();
         int puzzle1Solution = guardGallivant.solvePuzzle1();
         System.out.println("puzzle1Solution = " + puzzle1Solution);
+        int puzzle2Solution = guardGallivant.solvePuzzle2();
+        System.out.println("puzzle2Solution = " + puzzle2Solution);
     }
 
 }
