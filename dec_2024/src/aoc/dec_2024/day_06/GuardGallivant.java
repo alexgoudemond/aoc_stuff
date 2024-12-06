@@ -2,16 +2,14 @@ package aoc.dec_2024.day_06;
 
 import aoc.dec_2024.helper.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class GuardGallivant {
 
     public static final String GUARD_DIRECTIONS = "^>V<";
 
-    public static final String OBSTACLE = "#";
+    public static final String OBSTACLES = "#O";
 
     public static final String VISITED = "X";
 
@@ -51,27 +49,49 @@ public class GuardGallivant {
     // TODO Goudemond 2024/12/06 | Note all coordinates visited inline with a boundary
     // TODO Goudemond 2024/12/06 | check all those
     private int solvePuzzle2() {
-        puzzleGrid.resetGrid(); // (Goudemond 20241206) Reset
+        puzzleGrid.resetGrid();
         simulateGuardPatrolInLab();
-//        puzzleGrid.showAsGrid();
         Set<Coordinate> guardVisitsOnMap = getGuardVisitsOnMap();
-        Set<Coordinate> mapBoundaries = getMapBoundaries();
-        // TODO Goudemond 2024/12/06 | keep going
+        puzzleGrid.resetGrid();
+        int obstructionPositions = 0;
+
+//        Coordinate positionToCheck = new Coordinate(6, 3); // works
+//        Coordinate positionToCheck = new Coordinate(7, 6); // works
+//        Coordinate positionToCheck = new Coordinate(7, 7); // works
+//        Coordinate positionToCheck = new Coordinate(8, 1); // works
+//        Coordinate positionToCheck = new Coordinate(8, 3); // works
+        Coordinate positionToCheck = new Coordinate(9, 7); // works
+        // TODO Goudemond 2024/12/06 | put it all together
+        String originalElement = puzzleGrid.elementAt(positionToCheck);
+        puzzleGrid.setElementTo(positionToCheck, "O");
+        puzzleGrid.showAsGrid();
+        if (guardTrappedInInfinitePatrol()) {
+            obstructionPositions++;
+            System.out.println("trapped");
+        }
+        puzzleGrid.setElementTo(positionToCheck, originalElement);
+
         return -1;
     }
 
-    private Set<Coordinate> getMapBoundaries() {
-        Set<Coordinate> obstacles = new HashSet<>();
-        String[][] grid = this.puzzleGrid.getGrid();
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j].equals(OBSTACLE)) {
-//                    System.out.println("puzzleGrid.elementAt(" + i + ", " + j + ") = " + puzzleGrid.elementAt(i, j));
-                    obstacles.add(new Coordinate(i, j));
-                }
+    private boolean guardTrappedInInfinitePatrol() {
+        Coordinate guardStartingPosition = getGuardStartingPosition();
+        Coordinate previousPosition = guardStartingPosition;
+        Coordinate nextPosition = guardStartingPosition;
+        while (true) {
+            nextPosition = getNextPosition(nextPosition);
+            if (nextPosition.equals(Coordinate.dummyCoordinate())) {
+                return false;
             }
+            if (nextPosition.equals(guardStartingPosition)) {
+                return true;
+            }
+            String guardDirection = puzzleGrid.elementAt(previousPosition.getX(), previousPosition.getY());
+            markPositionOnLabMap(previousPosition, VISITED);
+            markPositionOnLabMap(nextPosition, guardDirection);
+////            System.out.println("nextPosition = " + nextPosition);
+            previousPosition = nextPosition;
         }
-        return obstacles;
     }
 
     private void simulateGuardPatrolInLab() {
@@ -106,7 +126,7 @@ public class GuardGallivant {
                 puzzleGrid.tooShort(nextPosition) || puzzleGrid.tooTall(nextPosition)) {
             return Coordinate.dummyCoordinate();
         }
-        while (puzzleGrid.elementAt(nextPosition.getX(), nextPosition.getY()).equals(OBSTACLE)) {
+        while (OBSTACLES.contains(puzzleGrid.elementAt(nextPosition.getX(), nextPosition.getY()))) {
             nextPosition = getNextPositionConsidering(currentPosition, ++facingDirectionIndex);
         }
         updateGuardDirection(facingDirectionIndex, currentPosition);
