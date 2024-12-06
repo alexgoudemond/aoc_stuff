@@ -5,6 +5,10 @@ import java.util.List;
 
 public class PuzzleGrid {
 
+    public String[][] getGrid() {
+        return puzzleGrid;
+    }
+
     private final String[][] puzzleGrid;
 
     private final String delimiter;
