@@ -48,16 +48,30 @@ public class GuardGallivant {
         return guardVisitsOnMap;
     }
 
-    // TODO Goudemond 2024/12/06 | Note all boundaries
     // TODO Goudemond 2024/12/06 | Note all coordinates visited inline with a boundary
     // TODO Goudemond 2024/12/06 | check all those
     private int solvePuzzle2() {
-//        this.labMap = puzzleGrid.getGrid(); // (Goudemond 20241206) Reset
-//        simulateGuardPatrolInLab();
+        puzzleGrid.resetGrid(); // (Goudemond 20241206) Reset
+        simulateGuardPatrolInLab();
 //        puzzleGrid.showAsGrid();
-//        Set<Coordinate> guardVisitsOnMap = getGuardVisitsOnMap();
-
+        Set<Coordinate> guardVisitsOnMap = getGuardVisitsOnMap();
+        Set<Coordinate> mapBoundaries = getMapBoundaries();
+        // TODO Goudemond 2024/12/06 | keep going
         return -1;
+    }
+
+    private Set<Coordinate> getMapBoundaries() {
+        Set<Coordinate> obstacles = new HashSet<>();
+        String[][] grid = this.puzzleGrid.getGrid();
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j].equals(OBSTACLE)) {
+//                    System.out.println("puzzleGrid.elementAt(" + i + ", " + j + ") = " + puzzleGrid.elementAt(i, j));
+                    obstacles.add(new Coordinate(i, j));
+                }
+            }
+        }
+        return obstacles;
     }
 
     private void simulateGuardPatrolInLab() {

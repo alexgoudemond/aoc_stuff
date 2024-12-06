@@ -5,11 +5,13 @@ import java.util.List;
 
 public class PuzzleGrid {
 
+    private final List<String> rawPuzzleContent;
+
     public String[][] getGrid() {
         return puzzleGrid;
     }
 
-    private final String[][] puzzleGrid;
+    private String[][] puzzleGrid;
 
     private final String delimiter;
 
@@ -19,9 +21,14 @@ public class PuzzleGrid {
 
     public PuzzleGrid(List<String> rawPuzzleContent, String delimiter) {
         this.delimiter = delimiter;
-        this.puzzleGrid = getContentsAsGrid(rawPuzzleContent);
+        this.rawPuzzleContent = rawPuzzleContent;
+        setPuzzleGrid(rawPuzzleContent);
         maxWidth = puzzleGrid[0].length;
         maxHeight = puzzleGrid.length;
+    }
+
+    private void setPuzzleGrid(List<String> rawPuzzleContent) {
+        this.puzzleGrid = getContentsAsGrid(rawPuzzleContent);
     }
 
     private String[][] getContentsAsGrid(List<String> rawPuzzleContent) {
@@ -100,5 +107,9 @@ public class PuzzleGrid {
 
     public void setElementTo(Coordinate position, String symbol) {
         this.puzzleGrid[position.getX()][position.getY()] = symbol;
+    }
+
+    public void resetGrid() {
+        setPuzzleGrid(rawPuzzleContent);
     }
 }
