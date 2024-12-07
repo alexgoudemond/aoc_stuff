@@ -11,6 +11,8 @@ public class GuardGallivant {
 
     public static final String OBSTACLES = "#O";
 
+    public static final String ADDED_OBSTACLE = "O";
+
     public static final String VISITED = "X";
 
     private final PuzzleGrid puzzleGrid;
@@ -19,8 +21,8 @@ public class GuardGallivant {
 
     public GuardGallivant() {
         PuzzleInputLoader puzzleInputLoader = new PuzzleInputLoaderImpl("");
-        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivantTest.txt");
-//        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivant001.txt");
+//        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivantTest.txt");
+        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivant001.txt");
         this.puzzleGrid = puzzleContents.getPuzzleGrid();
 //        this.labMap = puzzleContents.getPuzzleGrid().getGrid();
     }
@@ -38,7 +40,7 @@ public class GuardGallivant {
         Set<Coordinate> guardVisitsOnMap = new HashSet<>();
         for (int i = 0; i < puzzleGrid.numRows(); i++) {
             for (int j = 0; j < puzzleGrid.numColumns(); j++) {
-                if (puzzleGrid.elementAt(i, j).equals(VISITED)) {
+                if (puzzleGrid.elementAt(i, j).equals(VISITED) || GUARD_DIRECTIONS.contains(puzzleGrid.elementAt(i, j))) {
                     guardVisitsOnMap.add(new Coordinate(i, j));
                 }
             }
@@ -50,48 +52,99 @@ public class GuardGallivant {
     // TODO Goudemond 2024/12/06 | check all those
     private int solvePuzzle2() {
         puzzleGrid.resetGrid();
+        Coordinate guardStartingPosition = getGuardStartingPosition();
         simulateGuardPatrolInLab();
         Set<Coordinate> guardVisitsOnMap = getGuardVisitsOnMap();
-        puzzleGrid.resetGrid();
         int obstructionPositions = 0;
-
+//        puzzleGrid.showAsGrid();
+        for (Coordinate positionToCheck : guardVisitsOnMap) {
+            puzzleGrid.resetGrid();
+//            System.out.println("positionToCheck = " + positionToCheck); // 7 6
+            if (positionToCheck.equals(guardStartingPosition)) {
+                continue;
+            }
 //        Coordinate positionToCheck = new Coordinate(6, 3); // works
 //        Coordinate positionToCheck = new Coordinate(7, 6); // works
-//        Coordinate positionToCheck = new Coordinate(7, 7); // works
+//            positionToCheck = new Coordinate(7, 7); // works
 //        Coordinate positionToCheck = new Coordinate(8, 1); // works
 //        Coordinate positionToCheck = new Coordinate(8, 3); // works
-        Coordinate positionToCheck = new Coordinate(9, 7); // works
-        // TODO Goudemond 2024/12/06 | put it all together
-        String originalElement = puzzleGrid.elementAt(positionToCheck);
-        puzzleGrid.setElementTo(positionToCheck, "O");
-        puzzleGrid.showAsGrid();
-        if (guardTrappedInInfinitePatrol()) {
-            obstructionPositions++;
-            System.out.println("trapped");
+//        Coordinate positionToCheck = new Coordinate(9, 7); // works
+            // TODO Goudemond 2024/12/06 | put it all together
+            String originalElement = puzzleGrid.elementAt(positionToCheck);
+            puzzleGrid.setElementTo(positionToCheck, "O");
+//            puzzleGrid.showAsGrid();
+            if (guardTrappedInInfinitePatrol()) {
+                obstructionPositions++;
+//                System.out.println(positionToCheck + ": trapped");
+            }
+            puzzleGrid.setElementTo(positionToCheck, originalElement);
         }
-        puzzleGrid.setElementTo(positionToCheck, originalElement);
 
-        return -1;
+        return obstructionPositions;
     }
 
+    // TODO Goudemond 2024/12/07 | Infinite Loop with coord 3, 69! not getting this
     private boolean guardTrappedInInfinitePatrol() {
         Coordinate guardStartingPosition = getGuardStartingPosition();
         Coordinate previousPosition = guardStartingPosition;
         Coordinate nextPosition = guardStartingPosition;
+        String guardJourney = guardStartingPosition.toString();
+        String guardJourneySnapshot = "";
+        boolean firstTrip = true;
+        Coordinate noteworthyCoord = Coordinate.dummyCoordinate();
+        boolean firstTime = true;
         while (true) {
-            nextPosition = getNextPosition(nextPosition);
+            nextPosition = getNextPosition(nextPosition); // 8 2
             if (nextPosition.equals(Coordinate.dummyCoordinate())) {
                 return false;
             }
-            if (nextPosition.equals(guardStartingPosition)) {
-                return true;
+            if (!noteworthyCoord.equals(Coordinate.dummyCoordinate()) && noteworthyCoord.equals(nextPosition)) {
+                if (guardJourneySnapshot.equals(guardJourney)) {
+                    return true;
+                }
+                guardJourneySnapshot = guardJourney;
+                guardJourney = "";
             }
+
+            guardJourney += nextPosition.toString();
             String guardDirection = puzzleGrid.elementAt(previousPosition.getX(), previousPosition.getY());
             markPositionOnLabMap(previousPosition, VISITED);
             markPositionOnLabMap(nextPosition, guardDirection);
 ////            System.out.println("nextPosition = " + nextPosition);
             previousPosition = nextPosition;
+            if (firstTime && nextFacingPositionIsObstacle(nextPosition)) {
+                firstTime = false;
+                guardJourneySnapshot = guardJourney;
+                guardJourney = "";
+                noteworthyCoord = nextPosition;
+            }
         }
+    }
+
+    @SuppressWarnings("RedundantIfStatement")
+    private boolean nextFacingPositionIsObstacle(Coordinate position) {
+        int facingDirectionIndex = GUARD_DIRECTIONS.indexOf(puzzleGrid.elementAt(position));
+        Coordinate nextPosition = position;
+        switch (facingDirectionIndex) {
+            case 0:
+                nextPosition = nextPosition.up();
+                break;
+            case 1:
+                nextPosition = nextPosition.right();
+                break;
+            case 2:
+                nextPosition = nextPosition.down();
+                break;
+            case 3:
+                nextPosition = nextPosition.left();
+                break;
+            default:
+                throw new RuntimeException("Invalid facing direction in adjacentPositionIsObstacle!");
+        }
+        if (!puzzleGrid.outsideGrid(nextPosition) && puzzleGrid.elementAt(nextPosition).equals(ADDED_OBSTACLE)) {
+            return true;
+        }
+        return false;
     }
 
     private void simulateGuardPatrolInLab() {
@@ -122,8 +175,7 @@ public class GuardGallivant {
         int facingDirectionIndex = GUARD_DIRECTIONS.indexOf(puzzleGrid.elementAt(guardPosition));
         nextPosition = getNextPositionConsidering(currentPosition, facingDirectionIndex);
         // TODO Goudemond 2024/12/06 | handle boundaries
-        if (puzzleGrid.tooNarrow(nextPosition) || puzzleGrid.tooWide(nextPosition) ||
-                puzzleGrid.tooShort(nextPosition) || puzzleGrid.tooTall(nextPosition)) {
+        if (puzzleGrid.outsideGrid(nextPosition)) {
             return Coordinate.dummyCoordinate();
         }
         while (OBSTACLES.contains(puzzleGrid.elementAt(nextPosition.getX(), nextPosition.getY()))) {
@@ -134,7 +186,7 @@ public class GuardGallivant {
     }
 
     private void updateGuardDirection(int facingDirectionIndex, Coordinate currentPosition) {
-        int index = facingDirectionIndex >= GUARD_DIRECTIONS.length() ? 0 : facingDirectionIndex;
+        int index = facingDirectionIndex % GUARD_DIRECTIONS.length();
         String string = Character.toString(GUARD_DIRECTIONS.charAt(index));
         puzzleGrid.setElementTo(currentPosition, string);
     }

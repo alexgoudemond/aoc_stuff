@@ -112,4 +112,9 @@ public class PuzzleGrid {
     public void resetGrid() {
         setPuzzleGrid(rawPuzzleContent);
     }
+
+    public boolean outsideGrid(Coordinate nextPosition) {
+        return tooNarrow(nextPosition) || tooWide(nextPosition) ||
+                tooShort(nextPosition) || tooTall(nextPosition);
+    }
 }
