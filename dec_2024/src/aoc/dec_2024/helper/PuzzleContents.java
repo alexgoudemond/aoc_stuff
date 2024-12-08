@@ -24,8 +24,11 @@ public class PuzzleContents {
 
     @SuppressWarnings("DataFlowIssue")
     private List<String> getPuzzleAsRows(List<String> rawPuzzleContent) {
+        if (delimiter.equals("")){
+            return rawPuzzleContent;
+        }
         return rawPuzzleContent.stream()
-                .map(str -> str.split(delimiter)[0])
+                .map(str -> str.split(delimiter)[0])     // TODO Goudemond 2024/12/07 | Stable?
                 .collect(Collectors.toList());
     }
 
