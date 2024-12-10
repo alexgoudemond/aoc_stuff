@@ -9,7 +9,7 @@ public class MathHelper {
     private MathHelper() {}
 
     public static long evalLeftToRight(String expression){
-        List<Long> inputs = Arrays.stream(expression.split("[\\+\\*]"))
+        List<Long> inputs = Arrays.stream(expression.split("[\\+\\*\\&]"))
                 .map(Long::parseLong)
                 .collect(Collectors.toList());
         List<String> operators = Arrays.stream(expression.split("(\\d+)"))
@@ -22,8 +22,10 @@ public class MathHelper {
             long nextInput = inputs.get(nextIndex++);
             if (operator.equals("+")) {
                 result = result + nextInput;
-            }else{
+            }else if (operator.equals("*")) {
                 result = result * nextInput;
+            }else{
+                result = Long.parseLong(Long.toString(result) + Long.toString(nextInput));
             }
         }
         return result;

@@ -27,7 +27,7 @@ public class BridgeRepair {
             String[] calibrationArguments = calibrationEquation.split(": ");
             long product = getResult(calibrationArguments);
             List<String> calibrationInputs = getCalibrationInputs(calibrationArguments);
-            List<String> allPossibleEquations = getAllPossibleEquations(calibrationInputs);
+            List<String> allPossibleEquations = getAllPossibleEquationsUsingAdditionAndMultiplication(calibrationInputs);
             for (String expression : allPossibleEquations) {
                 long result = MathHelper.evalLeftToRight(expression);
 //                System.out.printf("%s = %s%n", expression, result);
@@ -41,7 +41,52 @@ public class BridgeRepair {
         return totalCalibrationResult; // 51277701 (too low) ; 51277870 (too low) ; 303876485655 --> right!
     }
 
-    private List<String> getAllPossibleEquations(List<String> calibrationInputs) {
+    // TODO Goudemond 2024/12/10 | not optimized - go from other direction?
+    public long solvePuzzle2(){
+        long totalCalibrationResult = 0;
+        for (String calibrationEquation : puzzleRows) {
+            String[] calibrationArguments = calibrationEquation.split(": ");
+            long product = getResult(calibrationArguments);
+            List<String> calibrationInputs = getCalibrationInputs(calibrationArguments);
+            List<String> allPossibleEquations = getAllPossibleEquationsUsingAdditionMultiplicationAndConcatenation(calibrationInputs);
+            for (String expression : allPossibleEquations) {
+                long result = MathHelper.evalLeftToRight(expression);
+//                System.out.printf("%s = %s%n", expression, result);
+                if (result == product) {
+//                    System.out.printf("%s = %s%n", expression, result);
+                    totalCalibrationResult += result;
+                    break;
+                }
+            }
+        }
+        return totalCalibrationResult; // 146111650210682 --> correct!
+    }
+
+    private List<String> getAllPossibleEquationsUsingAdditionMultiplicationAndConcatenation(List<String> calibrationInputs) {
+        int numberOperatorsNeeded = calibrationInputs.size() - 1;
+        int permutationCount = 0;
+        String defaultExpression = String.join("+", calibrationInputs);
+        List<String> expressions = new ArrayList<>();
+        List<String> operations = Arrays.stream(defaultExpression.split("(\\d+)"))
+                .collect(Collectors.toList());
+        expressions.add(defaultExpression);
+        double allPossiblePermutations = Math.pow(3, numberOperatorsNeeded) - 1;
+        while (permutationCount < allPossiblePermutations) {
+            permutationCount++;
+            String permutationAsBase3String = getPermutationAsBase3String(numberOperatorsNeeded, permutationCount);
+            String expression = createExpression(calibrationInputs, permutationAsBase3String, operations);
+            expressions.add(expression);
+        }
+        return expressions;
+    }
+
+    private String getPermutationAsBase3String(int numberOperatorsNeeded, int permutationCount) {
+        String permutationAsBinaryString = String.format("%" + numberOperatorsNeeded + "s", Integer.toString(permutationCount, 3));
+        permutationAsBinaryString = permutationAsBinaryString.replace(' ', '0');
+        return permutationAsBinaryString;
+    }
+
+    private List<String> getAllPossibleEquationsUsingAdditionAndMultiplication(List<String> calibrationInputs) {
         int numberOperatorsNeeded = calibrationInputs.size() - 1;
         int permutationCount = 0;
         String defaultExpression = String.join("+", calibrationInputs);
@@ -57,7 +102,6 @@ public class BridgeRepair {
             expressions.add(expression);
         }
         return expressions;
-
     }
 
     private String getPermutationAsBinaryString(int numberOperatorsNeeded, int permutationCount) {
@@ -74,8 +118,10 @@ public class BridgeRepair {
         for (String permutation : permutationAsBinaryString) {
             if (permutation.equals("0")) {
                 operations.set(operatorPlacementIndex, "+");
-            } else {
+            } else if (permutation.equals("1")) {
                 operations.set(operatorPlacementIndex, "*");
+            }else{
+                operations.set(operatorPlacementIndex, "&");
             }
             operatorPlacementIndex--;
         }
@@ -102,5 +148,7 @@ public class BridgeRepair {
         BridgeRepair bridgeRepair = new BridgeRepair();
         long puzzle1solution = bridgeRepair.solvePuzzle1();
         System.out.println("puzzle1solution = " + puzzle1solution);
+        long puzzle2solution = bridgeRepair.solvePuzzle2();
+        System.out.println("puzzle2solution = " + puzzle2solution);
     }
 }
