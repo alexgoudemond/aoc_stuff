@@ -1,11 +1,15 @@
 package aoc.dec_2024.helper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PuzzleGrid {
 
     private final List<String> rawPuzzleContent;
+
+    private Map<String, List<Coordinate>> uniqueElements;
 
     public String[][] getGrid() {
         return puzzleGrid;
@@ -23,8 +27,9 @@ public class PuzzleGrid {
         this.delimiter = delimiter;
         this.rawPuzzleContent = rawPuzzleContent;
         setPuzzleGrid(rawPuzzleContent);
-        maxWidth = puzzleGrid[0].length;
-        maxHeight = puzzleGrid.length;
+        this.maxWidth = puzzleGrid[0].length;
+        this.maxHeight = puzzleGrid.length;
+        this.uniqueElements = new HashMap<>();
     }
 
     private void setPuzzleGrid(List<String> rawPuzzleContent) {
@@ -49,11 +54,11 @@ public class PuzzleGrid {
         }
     }
 
-    public int numRows(){
+    public int numRows() {
         return puzzleGrid.length;
     }
 
-    public int numColumns(){
+    public int numColumns() {
         return puzzleGrid[0].length;
     }
 
@@ -74,15 +79,11 @@ public class PuzzleGrid {
     }
 
     public List<Coordinate> getCoordinatesFor(String letterToFind) {
-        List<Coordinate> xLocations = new ArrayList<>();
-        for (int i = 0; i < numRows(); i++) {
-            for (int j = 0; j < numColumns(); j++) {
-                if (elementAt(i, j).equals(letterToFind)) {
-                    xLocations.add(new Coordinate(i, j));
-                }
-            }
+        Map<String, List<Coordinate>> uniqueElements = getUniqueElements();
+        if (uniqueElements.containsKey(letterToFind)) {
+            return uniqueElements.get(letterToFind);
         }
-        return xLocations;
+        throw new RuntimeException(letterToFind + " not found in the PuzzleGrid");
     }
 
     public String correspondingLetter(Coordinate location) {
@@ -116,5 +117,30 @@ public class PuzzleGrid {
     public boolean outsideGrid(Coordinate nextPosition) {
         return tooNarrow(nextPosition) || tooWide(nextPosition) ||
                 tooShort(nextPosition) || tooTall(nextPosition);
+    }
+
+    public Map<String, List<Coordinate>> getUniqueElements() {
+        if (uniqueElements.isEmpty()) {
+            populateUniqueElements();
+        }
+        return uniqueElements;
+    }
+
+    private void populateUniqueElements() {
+        Map<String, List<Coordinate>> uniqueElements = new HashMap<>();
+        for (int i = 0; i < puzzleGrid.length; i++) {
+            for (int j = 0; j < puzzleGrid[i].length; j++) {
+                String element = puzzleGrid[i][j];
+                Coordinate coordinate = new Coordinate(i, j);
+                if (uniqueElements.containsKey(element)) {
+                    uniqueElements.get(element).add(coordinate);
+                } else {
+                    List<Coordinate> coordinates = new ArrayList<>();
+                    coordinates.add(coordinate);
+                    uniqueElements.put(element, coordinates);
+                }
+            }
+        }
+        this.uniqueElements = uniqueElements;
     }
 }
