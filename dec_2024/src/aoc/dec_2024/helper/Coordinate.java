@@ -68,4 +68,10 @@ public class Coordinate {
     public Coordinate up() {
         return new Coordinate(x - 1, y);
     }
+
+    @SuppressWarnings("SuspiciousNameCombination")
+    public Coordinate flip() {
+        return new Coordinate(y, x);
+    }
+
 }
