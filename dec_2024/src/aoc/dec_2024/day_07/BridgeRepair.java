@@ -23,26 +23,22 @@ public class BridgeRepair {
 
     public long solvePuzzle1() {
         long totalCalibrationResult = 0;
-//        for (String calibrationEquation : puzzleRows) {
-//        String calibrationEquation = "26324383: 7 9 8 7 414 471 185 8";
-        String calibrationEquation = "11884578: 26 91 864 391 590 78";     // TODO Goudemond 2024/12/08 | Should this be accepted?
-        String[] calibrationArguments = calibrationEquation.split(": ");
-        long product = getResult(calibrationArguments);
-        List<String> calibrationInputs = getCalibrationInputs(calibrationArguments);
-        List<String> allPossibleEquations = getAllPossibleEquations(calibrationInputs);
-        for (String expression : allPossibleEquations) {
-            long result = MathHelper.evalLeftToRight(expression);
-            System.out.printf("%s = %s%n", expression, result);
-            if (result == product) {
-                System.out.printf("%s = %s%n", expression, result);
-                totalCalibrationResult += result;
-                break;
+        for (String calibrationEquation : puzzleRows) {
+            String[] calibrationArguments = calibrationEquation.split(": ");
+            long product = getResult(calibrationArguments);
+            List<String> calibrationInputs = getCalibrationInputs(calibrationArguments);
+            List<String> allPossibleEquations = getAllPossibleEquations(calibrationInputs);
+            for (String expression : allPossibleEquations) {
+                long result = MathHelper.evalLeftToRight(expression);
+//                System.out.printf("%s = %s%n", expression, result);
+                if (result == product) {
+//                    System.out.printf("%s = %s%n", expression, result);
+                    totalCalibrationResult += result;
+                    break;
+                }
             }
-//            }
         }
-        // Reddit spoilers say I should be getting something like (146111650210682)
-        // they seem to be concatenating as a 3rd operation!?!?!?!?
-        return totalCalibrationResult; // 51277701 (too low) ; 51277870 (too low)
+        return totalCalibrationResult; // 51277701 (too low) ; 51277870 (too low) ; 303876485655 --> right!
     }
 
     private List<String> getAllPossibleEquations(List<String> calibrationInputs) {
