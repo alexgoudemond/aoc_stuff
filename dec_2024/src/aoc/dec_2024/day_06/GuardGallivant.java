@@ -21,8 +21,8 @@ public class GuardGallivant {
 
     public GuardGallivant() {
         PuzzleInputLoader puzzleInputLoader = new PuzzleInputLoaderImpl("");
-//        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivantTest.txt");
-        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivant001.txt");
+        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivantTest.txt");
+//        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_06/GuardGallivant001.txt");
         this.puzzleGrid = puzzleContents.getPuzzleGrid();
 //        this.labMap = puzzleContents.getPuzzleGrid().getGrid();
     }
@@ -56,26 +56,15 @@ public class GuardGallivant {
         simulateGuardPatrolInLab();
         Set<Coordinate> guardVisitsOnMap = getGuardVisitsOnMap();
         int obstructionPositions = 0;
-//        puzzleGrid.showAsGrid();
         for (Coordinate positionToCheck : guardVisitsOnMap) {
             puzzleGrid.resetGrid();
-//            System.out.println("positionToCheck = " + positionToCheck); // 7 6
             if (positionToCheck.equals(guardStartingPosition)) {
                 continue;
             }
-//        Coordinate positionToCheck = new Coordinate(6, 3); // works
-//        Coordinate positionToCheck = new Coordinate(7, 6); // works
-//            positionToCheck = new Coordinate(7, 7); // works
-//        Coordinate positionToCheck = new Coordinate(8, 1); // works
-//        Coordinate positionToCheck = new Coordinate(8, 3); // works
-//        Coordinate positionToCheck = new Coordinate(9, 7); // works
-            // TODO Goudemond 2024/12/06 | put it all together
             String originalElement = puzzleGrid.elementAt(positionToCheck);
             puzzleGrid.setElementTo(positionToCheck, "O");
-//            puzzleGrid.showAsGrid();
             if (guardTrappedInInfinitePatrol()) {
                 obstructionPositions++;
-//                System.out.println(positionToCheck + ": trapped");
             }
             puzzleGrid.setElementTo(positionToCheck, originalElement);
         }
@@ -84,40 +73,57 @@ public class GuardGallivant {
     }
 
     // TODO Goudemond 2024/12/07 | Infinite Loop with coord 3, 69! not getting this
+    // TODO Goudemond 2024/12/12 | tried again - no luck and im tired
     private boolean guardTrappedInInfinitePatrol() {
         Coordinate guardStartingPosition = getGuardStartingPosition();
-        Coordinate previousPosition = guardStartingPosition;
-        Coordinate nextPosition = guardStartingPosition;
-        String guardJourney = guardStartingPosition.toString();
-        String guardJourneySnapshot = "";
-        boolean firstTrip = true;
-        Coordinate noteworthyCoord = Coordinate.dummyCoordinate();
-        boolean firstTime = true;
+        int facingDirectionIndex = GUARD_DIRECTIONS.indexOf(puzzleGrid.elementAt(guardStartingPosition));
+        Coordinate nextPosition = getNextPositionConsidering(guardStartingPosition, facingDirectionIndex);
+        Coordinate previousPosition = nextPosition;
+        Coordinate obstacleFacingPosition = Coordinate.dummyCoordinate();
         while (true) {
-            nextPosition = getNextPosition(nextPosition); // 8 2
-            if (nextPosition.equals(Coordinate.dummyCoordinate())) {
+            if (puzzleGrid.outsideGrid(nextPosition)) {
                 return false;
             }
-            if (!noteworthyCoord.equals(Coordinate.dummyCoordinate()) && noteworthyCoord.equals(nextPosition)) {
-                if (guardJourneySnapshot.equals(guardJourney)) {
-                    return true;
-                }
-                guardJourneySnapshot = guardJourney;
-                guardJourney = "";
+            if (puzzleGrid.elementAt(nextPosition).equals("0") && !obstacleFacingPosition.equals(Coordinate.dummyCoordinate())) {
+                obstacleFacingPosition = nextPosition;
+//                nextPosition = getNextPositionConsidering(guardStartingPosition, ++facingDirectionIndex);
+            } else if (puzzleGrid.elementAt(nextPosition).equals("0") && nextPosition.equals(obstacleFacingPosition)) {
+                return true;
+            } else if (puzzleGrid.elementAt(nextPosition).equals(".")) {
+//                nextPosition = getNextPositionConsidering(guardStartingPosition, ++facingDirectionIndex);
+//            } else {
+                markPositionOnLabMap(previousPosition, VISITED);
+                String guardDirection = puzzleGrid.elementAt(previousPosition.getX(), previousPosition.getY());
+                markPositionOnLabMap(nextPosition, guardDirection);
             }
-
-            guardJourney += nextPosition.toString();
-            String guardDirection = puzzleGrid.elementAt(previousPosition.getX(), previousPosition.getY());
-            markPositionOnLabMap(previousPosition, VISITED);
-            markPositionOnLabMap(nextPosition, guardDirection);
-////            System.out.println("nextPosition = " + nextPosition);
             previousPosition = nextPosition;
-            if (firstTime && nextFacingPositionIsObstacle(nextPosition)) {
-                firstTime = false;
-                guardJourneySnapshot = guardJourney;
-                guardJourney = "";
-                noteworthyCoord = nextPosition;
-            }
+            nextPosition = getNextPositionConsidering(guardStartingPosition, ++facingDirectionIndex);
+//        while (true) {
+//            nextPosition = getNextPosition(nextPosition);
+//            if (nextPosition.equals(Coordinate.dummyCoordinate())) {
+//                return false;
+//            }
+//            if (!noteworthyCoord.equals(Coordinate.dummyCoordinate()) && noteworthyCoord.equals(nextPosition)) {
+//                if (guardJourneySnapshot.equals(guardJourney)) {
+//                    return true;
+//                }
+//                guardJourneySnapshot = guardJourney;
+//                guardJourney = "";
+//            }
+//
+//            guardJourney += nextPosition.toString();
+//            String guardDirection = puzzleGrid.elementAt(previousPosition.getX(), previousPosition.getY());
+//            markPositionOnLabMap(previousPosition, VISITED);
+//            markPositionOnLabMap(nextPosition, guardDirection);
+//////            System.out.println("nextPosition = " + nextPosition);
+//            previousPosition = nextPosition;
+//            if (firstTime && nextFacingPositionIsObstacle(nextPosition)) {
+//                firstTime = false;
+//                guardJourneySnapshot = guardJourney;
+//                guardJourney = "";
+//                noteworthyCoord = nextPosition;
+//            }
+//        }
         }
     }
 
@@ -171,17 +177,16 @@ public class GuardGallivant {
 
     private Coordinate getNextPosition(Coordinate guardPosition) {
         Coordinate nextPosition = guardPosition;
-        Coordinate currentPosition = guardPosition;
         int facingDirectionIndex = GUARD_DIRECTIONS.indexOf(puzzleGrid.elementAt(guardPosition));
-        nextPosition = getNextPositionConsidering(currentPosition, facingDirectionIndex);
+        nextPosition = getNextPositionConsidering(guardPosition, facingDirectionIndex);
         // TODO Goudemond 2024/12/06 | handle boundaries
         if (puzzleGrid.outsideGrid(nextPosition)) {
             return Coordinate.dummyCoordinate();
         }
         while (OBSTACLES.contains(puzzleGrid.elementAt(nextPosition.getX(), nextPosition.getY()))) {
-            nextPosition = getNextPositionConsidering(currentPosition, ++facingDirectionIndex);
+            nextPosition = getNextPositionConsidering(guardPosition, ++facingDirectionIndex);
         }
-        updateGuardDirection(facingDirectionIndex, currentPosition);
+        updateGuardDirection(facingDirectionIndex, guardPosition);
         return nextPosition;
     }
 
