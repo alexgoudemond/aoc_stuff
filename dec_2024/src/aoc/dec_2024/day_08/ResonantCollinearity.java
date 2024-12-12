@@ -32,7 +32,6 @@ public class ResonantCollinearity {
     private int solvePuzzle2() {
         Map<String, List<Coordinate>> uniqueElementsMap = puzzleGrid.getUniqueElements();
         Set<Coordinate> antiNodes = new HashSet<>();
-        Coordinate antiNode = Coordinate.dummyCoordinate();
         for (String element : uniqueElementsMap.keySet()) {
             if (element.equals(".")) {
                 continue;
@@ -42,16 +41,16 @@ public class ResonantCollinearity {
                 for (int j = i + 1; j < antennas.size(); j++) {
                     Coordinate antennaOne = antennas.get(i);
                     Coordinate antennaTwo = antennas.get(j);
-                    addAllAntiNodesInLine(antennaTwo, antennaOne, antiNodes);
-                    addAllAntiNodesInLine(antennaOne, antennaTwo, antiNodes);
-                    // TODO Goudemond 2024/12/12 | fix to get 955
+                    antiNodes.addAll(addAllAntiNodesInLine(antennaTwo, antennaOne));
+                    antiNodes.addAll(addAllAntiNodesInLine(antennaOne, antennaTwo));
                 }
             }
         }
         return antiNodes.size(); // 931 --> too low ; 955 --> correct! (did have help from reddit)
     }
 
-    private void addAllAntiNodesInLine(Coordinate antennaTwo, Coordinate antennaOne, Set<Coordinate> antiNodes) {
+    private List<Coordinate> addAllAntiNodesInLine(Coordinate antennaTwo, Coordinate antennaOne) {
+        List<Coordinate> antiNodes = new ArrayList<>();
         Coordinate newAntinode;
         int newXValue = antennaTwo.getX() + (antennaTwo.getX() - antennaOne.getX());
         int newYValue = antennaTwo.getY() + (antennaTwo.getY() - antennaOne.getY());
@@ -63,6 +62,7 @@ public class ResonantCollinearity {
             newYValue += (antennaTwo.getY() - antennaOne.getY());
             newAntinode = new Coordinate(newXValue, newYValue);
         }
+        return antiNodes;
     }
 
     private void addAntiNodes(String element, Set<Coordinate> antiNodes) {
