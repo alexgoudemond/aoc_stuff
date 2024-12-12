@@ -2,6 +2,7 @@ package aoc.dec_2024.helper;
 
 import java.util.Objects;
 
+// TODO Goudemond 2024/12/12 | implement Comparable
 public class Coordinate {
 
     private int x;
