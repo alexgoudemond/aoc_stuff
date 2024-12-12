@@ -11,13 +11,12 @@ public class ResonantCollinearity {
     public ResonantCollinearity() {
         PuzzleInputLoader puzzleInputLoader = new PuzzleInputLoaderImpl("");
 //        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_08/ResonantCollinearityTest.txt");
+//        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_08/ResonantCollinearityTest002.txt");
         PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_08/ResonantCollinearity.txt");
         this.puzzleGrid = puzzleContents.getPuzzleGrid();
     }
 
-    // TODO Goudemond 2024/12/10 | Bresenham Line Algorithm? Or super simple?
     private int solvePuzzle1() {
-        System.out.println("Hello World!");
         Map<String, List<Coordinate>> uniqueElementsMap = puzzleGrid.getUniqueElements();
 //        uniqueElementsMap.forEach((key, value) -> {
 //            System.out.println(key + ": " + value);
@@ -28,6 +27,42 @@ public class ResonantCollinearity {
         }
         System.out.println("antiNodes = " + antiNodes);
         return antiNodes.size(); // 216 --> too low ; 240 --> correct
+    }
+
+    private int solvePuzzle2() {
+        Map<String, List<Coordinate>> uniqueElementsMap = puzzleGrid.getUniqueElements();
+        Set<Coordinate> antiNodes = new HashSet<>();
+        Coordinate antiNode = Coordinate.dummyCoordinate();
+        for (String element : uniqueElementsMap.keySet()) {
+            if (element.equals(".")) {
+                continue;
+            }
+            List<Coordinate> antennas = puzzleGrid.getCoordinatesFor(element);
+            for (int i = 0; i < antennas.size(); i++) {
+                for (int j = i + 1; j < antennas.size(); j++) {
+                    Coordinate antennaOne = antennas.get(i);
+                    Coordinate antennaTwo = antennas.get(j);
+                    addAllAntiNodesInLine(antennaTwo, antennaOne, antiNodes);
+                    addAllAntiNodesInLine(antennaOne, antennaTwo, antiNodes);
+                    // TODO Goudemond 2024/12/12 | fix to get 955
+                }
+            }
+        }
+        return antiNodes.size(); // 931 --> too low ; 955 --> correct! (did have help from reddit)
+    }
+
+    private void addAllAntiNodesInLine(Coordinate antennaTwo, Coordinate antennaOne, Set<Coordinate> antiNodes) {
+        Coordinate newAntinode;
+        int newXValue = antennaTwo.getX() + (antennaTwo.getX() - antennaOne.getX());
+        int newYValue = antennaTwo.getY() + (antennaTwo.getY() - antennaOne.getY());
+        newAntinode = new Coordinate(newXValue, newYValue);
+        antiNodes.add(antennaTwo);
+        while (!puzzleGrid.outsideGrid(newAntinode)) {
+            antiNodes.add(newAntinode);
+            newXValue += (antennaTwo.getX() - antennaOne.getX());
+            newYValue += (antennaTwo.getY() - antennaOne.getY());
+            newAntinode = new Coordinate(newXValue, newYValue);
+        }
     }
 
     private void addAntiNodes(String element, Set<Coordinate> antiNodes) {
@@ -101,6 +136,8 @@ public class ResonantCollinearity {
         ResonantCollinearity resonantCollinear = new ResonantCollinearity();
         int puzzle1Solution = resonantCollinear.solvePuzzle1();
         System.out.println("puzzle1Solution = " + puzzle1Solution);
+        int puzzle2Solution = resonantCollinear.solvePuzzle2();
+        System.out.println("puzzle2Solution = " + puzzle2Solution);
     }
 
 }
