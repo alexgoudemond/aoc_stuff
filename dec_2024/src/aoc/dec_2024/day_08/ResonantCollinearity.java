@@ -10,8 +10,8 @@ public class ResonantCollinearity {
 
     public ResonantCollinearity() {
         PuzzleInputLoader puzzleInputLoader = new PuzzleInputLoaderImpl("");
-        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_08/ResonantCollinearityTest.txt");
-//        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_08/ResonantCollinearity.txt");
+//        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_08/ResonantCollinearityTest.txt");
+        PuzzleContents puzzleContents = puzzleInputLoader.getPuzzleContents("day_08/ResonantCollinearity.txt");
         this.puzzleGrid = puzzleContents.getPuzzleGrid();
     }
 
@@ -24,51 +24,77 @@ public class ResonantCollinearity {
 //        });
         Set<Coordinate> antiNodes = new HashSet<>();
         for (String element : uniqueElementsMap.keySet()) {
-//            System.out.println("puzzleGrid.getCoordinatesFor(" + element + ") = " + puzzleGrid.getCoordinatesFor(element));
-            if (element.equals(".")) {
-                continue;
-            }
-            List<Coordinate> antennas = puzzleGrid.getCoordinatesFor(element);
-            if (antennas.size() == 1) {
-                continue;
-            }
-            for (int i = 0; i < antennas.size(); i++) {
-                for (int j = i + 1; j < antennas.size(); j++) {
-                    Coordinate antennaOne = antennas.get(i);
-                    Coordinate antennaTwo = antennas.get(j);
-//                    System.out.println("antennaOne = " + antennaOne);
-//                    System.out.println("antennaTwo = " + antennaTwo);
-                    List<Coordinate> straightLineCoordinates = puzzleGrid.getCoordinatesThatLiePerfectlyInTheStraightLine(antennaOne, antennaTwo);
-//                    System.out.println("straightLineCoordinates = " + straightLineCoordinates);
-                    for (Coordinate antennaNeighbour : straightLineCoordinates) {
-                        if (antennaNeighbour.equals(antennaOne) || antennaNeighbour.equals(antennaTwo)) {
-                            continue;
-                        }
-                        if (correctDistanceForAntiNode(antennaOne, antennaTwo, antennaNeighbour)) {
-                            antiNodes.add(antennaNeighbour);
-                        }
-                    }
-                }
-//                System.out.println("antiNodes = " + antiNodes);
-//                return;
-            }
+            addAntiNodes(element, antiNodes);
         }
         System.out.println("antiNodes = " + antiNodes);
-        return antiNodes.size(); // 216 --> too low
+        return antiNodes.size(); // 216 --> too low ; 240 --> correct
+    }
+
+    private void addAntiNodes(String element, Set<Coordinate> antiNodes) {
+        Coordinate antiNode = Coordinate.dummyCoordinate();
+//        System.out.println("puzzleGrid.getCoordinatesFor(" + element + ") = " + puzzleGrid.getCoordinatesFor(element));
+        if (element.equals(".")) {
+            return;
+        }
+        List<Coordinate> antennas = puzzleGrid.getCoordinatesFor(element);
+        if (antennas.size() == 1) {
+            return;
+        }
+        for (int i = 0; i < antennas.size(); i++) {
+            for (int j = i + 1; j < antennas.size(); j++) {
+                Coordinate antennaOne = antennas.get(i);
+                Coordinate antennaTwo = antennas.get(j);
+                antiNode = getAntinode(antennaOne, antennaTwo);
+                if (!antiNode.equals(Coordinate.dummyCoordinate())) {
+                    antiNodes.add(antiNode);
+                }
+                antiNode = getAntinode(antennaTwo, antennaOne);
+                if (!antiNode.equals(Coordinate.dummyCoordinate())) {
+                    antiNodes.add(antiNode);
+                }
+            }
+        }
+    }
+
+    private Coordinate getAntinode(Coordinate antennaOne, Coordinate antennaTwo) {
+        int newXValue = antennaTwo.getX() + (antennaTwo.getX() - antennaOne.getX());
+        int newYValue = antennaTwo.getY() + (antennaTwo.getY() - antennaOne.getY());
+        Coordinate newAntinode = new Coordinate(newXValue, newYValue);
+        if (puzzleGrid.outsideGrid(newAntinode)) {
+            return Coordinate.dummyCoordinate();
+        }
+        return newAntinode;
     }
 
     private boolean correctDistanceForAntiNode(Coordinate antennaOne, Coordinate antennaTwo, Coordinate antennaNeighbour) {
-        int singleHorizontalDistance = Math.abs(antennaOne.getX() - antennaTwo.getX());
+//        int singleHorizontalDistance = Math.abs(antennaOne.getX() - antennaTwo.getX());
 //        int singleVerticalDistance = Math.abs(antennaOne.getY() - antennaTwo.getY());
-        if (Math.abs(antennaNeighbour.getX() - antennaOne.getX()) == singleHorizontalDistance
-                && Math.abs(antennaNeighbour.getX() - antennaTwo.getX()) == 2 * singleHorizontalDistance) {
+//        if (Math.abs(antennaNeighbour.getX() - antennaOne.getX()) == singleHorizontalDistance
+//                && Math.abs(antennaNeighbour.getX() - antennaTwo.getX()) == 2 * singleHorizontalDistance
+//                && Math.abs(antennaNeighbour.getY() - antennaOne.getY()) == singleVerticalDistance
+//                && Math.abs(antennaNeighbour.getY() - antennaTwo.getY()) == 2 * singleVerticalDistance) {
+//            return true;
+//        }
+//        if (Math.abs(antennaNeighbour.getX() - antennaOne.getX()) == 2 * singleHorizontalDistance
+//                && Math.abs(antennaNeighbour.getX() - antennaTwo.getX()) == singleHorizontalDistance
+//                && Math.abs(antennaNeighbour.getY() - antennaOne.getY()) == 2 * singleVerticalDistance
+//                && Math.abs(antennaNeighbour.getY() - antennaTwo.getY()) == singleVerticalDistance) {
+//            return true;
+//        }
+        double distance = distance(antennaOne, antennaTwo);
+        double distanceToCoordinate1 = distance(antennaNeighbour, antennaOne);
+        double distanceToCoordinate2 = distance(antennaNeighbour, antennaTwo);
+        if (distanceToCoordinate2 == distance && distanceToCoordinate1 == 2 * distance) {
             return true;
         }
-        if (Math.abs(antennaNeighbour.getX() - antennaOne.getX()) == 2 * singleHorizontalDistance
-                && Math.abs(antennaNeighbour.getX() - antennaTwo.getX()) == singleHorizontalDistance) {
+        if (distanceToCoordinate2 == 2 * distance && distanceToCoordinate1 == distance) {
             return true;
         }
         return false;
+    }
+
+    private double distance(Coordinate antennaOne, Coordinate antennaTwo) {
+        return Math.sqrt(Math.pow(antennaOne.getX() - antennaTwo.getX(), 2) + Math.pow(antennaOne.getY() - antennaTwo.getY(), 2));
     }
 
     public static void main(String[] args) {
