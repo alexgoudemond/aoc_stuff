@@ -70,9 +70,9 @@ public class Coordinate {
         return new Coordinate(x - 1, y);
     }
 
-    @SuppressWarnings("SuspiciousNameCombination")
-    public Coordinate flip() {
-        return new Coordinate(y, x);
+    public Coordinate plus(int deltaX, int deltaY) {
+        int xValue = getX() + deltaX;
+        int yValue = getY() + deltaY;
+        return new Coordinate(xValue, yValue);
     }
-
 }

@@ -145,46 +145,4 @@ public class PuzzleGrid {
         this.uniqueElements = uniqueElements;
     }
 
-    /**
-     * A very simple Straight Line algorithm. It only checks which Coordinates inside the Grid lie
-     * perfectly on a straight line (taking the form <code>y = mx + c</code>.
-     * <p>
-     * Note: This will NOT include Coordinates that lie between the 2 Coordinates
-     * </p>
-     * Note that the Coordinates are flipped to ensure the line graph calculation is correct for our quadrant.
-     *
-     * @param coordinateOne {@link Coordinate}
-     * @param coordinateTwo {@link Coordinate}
-     * @return A list of Coordinates that lie perfectly on the straight line formed by the 2 Coordinates
-     */
-    @SuppressWarnings("UnnecessaryLocalVariable")
-    public List<Coordinate> getCoordinatesThatLiePerfectlyInTheStraightLine(Coordinate coordinateOne, Coordinate coordinateTwo) {
-        coordinateOne = coordinateOne.flip();
-        coordinateTwo = coordinateTwo.flip();
-        int x0 = coordinateOne.getX();
-        int y0 = coordinateOne.getY();
-        int x1 = coordinateTwo.getX();
-        int y1 = coordinateTwo.getY();
-        double deltaX = x1 - x0;
-        double deltaY = y1 - y0;
-        double gradient = deltaY / deltaX;
-        List<Coordinate> straightLineNeighbours = getStraightLineNeighbours(coordinateOne, gradient).stream()
-                .map(Coordinate::flip).collect(Collectors.toList());
-        return straightLineNeighbours;
-    }
-
-    private List<Coordinate> getStraightLineNeighbours(Coordinate coordinateOne, double gradient) {
-        double c = coordinateOne.getY() - (gradient * coordinateOne.getX());
-        List<Coordinate> straightLineNeighbours = new ArrayList<>();
-        for (int i = 0; i < puzzleGrid.length; i++) {
-            for (int j = 0; j < puzzleGrid[i].length; j++) {
-                Coordinate coordinate = new Coordinate(j, i); // (Goudemond 20241210) Note the order - bottom right quadrant
-                if (coordinate.getY() == (gradient * coordinate.getX()) + c) {
-                    straightLineNeighbours.add(coordinate);
-                    break;
-                }
-            }
-        }
-        return straightLineNeighbours;
-    }
 }
