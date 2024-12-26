@@ -17,8 +17,68 @@ public class HoofIt {
 //        this.puzzleContents = puzzleInputLoader.getPuzzleContents("day_10/HoofIt003.txt");
 //        this.puzzleContents = puzzleInputLoader.getPuzzleContents("day_10/HoofIt004.txt");
 //        this.puzzleContents = puzzleInputLoader.getPuzzleContents("day_10/HoofIt005.txt");
-        this.puzzleContents = puzzleInputLoader.getPuzzleContents("day_10/HoofIt.txt");
+//        this.puzzleContents = puzzleInputLoader.getPuzzleContents("day_10/HoofIt.txt");
+//        this.puzzleContents = puzzleInputLoader.getPuzzleContents("day_10/HoofIt006.txt");
+        this.puzzleContents = puzzleInputLoader.getPuzzleContents("day_10/HoofIt007.txt");
         this.puzzleGrid = puzzleContents.getPuzzleGrid();
+    }
+
+    // TODO Goudemond 2024/12/26 | Why supposed to get 13 here?
+    private int solvePuzzle2() {
+        //        puzzleContents.showAsGrid();
+        List<Coordinate> startingCoordinates = getStartingCoordinates();
+//        System.out.println("Starting coordinates: " + startingCoordinates);
+        int score = 0;
+        for (Coordinate trailHead : startingCoordinates) {
+//            System.out.println("info for trailhead: " + trailHead);
+            List<Coordinate> endPositions = new ArrayList<>();
+            Set<Coordinate> visitedCoordinates = new HashSet<>();
+            Stack<Coordinate> stack = new Stack<>();
+            Coordinate currentCoordinate = Coordinate.dummyCoordinate();
+            stack.push(trailHead);
+            int rating = 0;
+            // each compass position, if not visited - add to stack. then add currentPosition to visited
+            while (!stack.isEmpty()) {
+                currentCoordinate = stack.pop();
+                visitedCoordinates.add(currentCoordinate);
+                if (puzzleGrid.elementAt(currentCoordinate).equals("9")) {
+//                    endPositions.add(currentCoordinate);
+                    rating++;
+                    continue;
+                }
+                if (!puzzleGrid.outsideGrid(currentCoordinate.up()) && validSlope(currentCoordinate, currentCoordinate.up())) {
+                    if (visitedCoordinates.contains(currentCoordinate.up())) {
+                        rating++;
+                    } else {
+                        stack.push(currentCoordinate.up());
+                    }
+                }
+                if (!puzzleGrid.outsideGrid(currentCoordinate.right()) && validSlope(currentCoordinate, currentCoordinate.right())) {
+                    if (visitedCoordinates.contains(currentCoordinate.right())) {
+                        rating++;
+                    } else {
+                        stack.push(currentCoordinate.right());
+                    }
+                }
+                if (!puzzleGrid.outsideGrid(currentCoordinate.down()) && validSlope(currentCoordinate, currentCoordinate.down())) {
+                    if (visitedCoordinates.contains(currentCoordinate.down())) {
+                        rating++;
+                    } else {
+                        stack.push(currentCoordinate.down());
+                    }
+                }
+                if (!puzzleGrid.outsideGrid(currentCoordinate.left()) && validSlope(currentCoordinate, currentCoordinate.left())) {
+                    if (visitedCoordinates.contains(currentCoordinate.left())) {
+                        rating++;
+                    } else {
+                        stack.push(currentCoordinate.left());
+                    }
+                }
+            }
+            //            endPositions.forEach(System.out::println);
+            System.out.println("rating = " + rating);
+        }
+        return -1;
     }
 
     private int solvePuzzle1() {
@@ -98,5 +158,7 @@ public class HoofIt {
         HoofIt hoofIt = new HoofIt();
         int puzzle1Solution = hoofIt.solvePuzzle1();
         System.out.println("puzzle1Solution = " + puzzle1Solution);
+        int puzzle2Solution = hoofIt.solvePuzzle2();
+        System.out.println("puzzle2Solution = " + puzzle2Solution);
     }
 }
