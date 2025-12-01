@@ -1,4 +1,4 @@
-package za.co.alexgoudemond.dec_2015.helper;
+package za.co.alexgoudemond.aoc.dec_2015.helper;
 
 import java.util.List;
 

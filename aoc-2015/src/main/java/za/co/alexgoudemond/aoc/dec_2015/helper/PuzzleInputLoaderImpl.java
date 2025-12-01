@@ -1,4 +1,4 @@
-package za.co.alexgoudemond.dec_2015.helper;
+package za.co.alexgoudemond.aoc.dec_2015.helper;
 
 
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PuzzleInputLoaderImpl implements PuzzleInputLoader {
 
-    private final String relativeLocation = "dec_2015/resources/aoc/dec_2015/";
+    private final String relativeLocation = "aoc-2015/src/main/resources/";
 
     @Override
     public List<String> getRawPuzzleInput(String docName) {

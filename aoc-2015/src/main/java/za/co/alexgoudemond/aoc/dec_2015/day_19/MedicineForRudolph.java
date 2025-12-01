@@ -1,7 +1,7 @@
-package za.co.alexgoudemond.dec_2015.day_19;
+package za.co.alexgoudemond.aoc.dec_2015.day_19;
 
-import za.co.alexgoudemond.dec_2015.helper.PuzzleInputLoader;
-import za.co.alexgoudemond.dec_2015.helper.PuzzleInputLoaderImpl;
+import za.co.alexgoudemond.aoc.dec_2015.helper.PuzzleInputLoader;
+import za.co.alexgoudemond.aoc.dec_2015.helper.PuzzleInputLoaderImpl;
 
 import java.util.*;
 
