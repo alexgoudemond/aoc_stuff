@@ -7,7 +7,7 @@ import java.util.List;
 
 public class PuzzleInputLoaderImpl implements PuzzleInputLoader {
 
-    private final String relativeLocation = "dec_2024/resources/aoc/dec_2024/";
+    private final String relativeLocation = "aoc-2024/src/main/resources/dec_2024/";
 
     private final String delimiter;
 

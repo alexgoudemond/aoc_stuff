@@ -1,10 +1,6 @@
 package za.co.alexgoudemond.aoc.dec_2024.day_10;
 
-import aoc.dec_2024.helper.*;
-import za.co.alexgoudemond.aoc.dec_2024.helper.Coordinate;
-import za.co.alexgoudemond.aoc.dec_2024.helper.PuzzleContents;
-import za.co.alexgoudemond.aoc.dec_2024.helper.PuzzleGrid;
-import za.co.alexgoudemond.aoc.dec_2024.helper.PuzzleInputLoaderImpl;
+import za.co.alexgoudemond.aoc.dec_2024.helper.*;
 
 import java.util.*;
 

@@ -1,8 +1,6 @@
 package za.co.alexgoudemond.aoc.dec_2024.day_06;
 
-import aoc.dec_2024.helper.*;
 import za.co.alexgoudemond.aoc.dec_2024.helper.*;
-import za.co.alexgoudemond.dec_2024.helper.*;
 
 import java.util.HashSet;
 import java.util.Set;
